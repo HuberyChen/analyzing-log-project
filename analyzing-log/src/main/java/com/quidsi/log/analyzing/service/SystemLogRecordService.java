@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quidsi.core.util.DateUtils;
 import com.quidsi.log.analyzing.FileScan;
 import com.quidsi.log.analyzing.FileScanDecorator;
 import com.quidsi.log.analyzing.FileScanUtils;
@@ -45,7 +44,7 @@ public class SystemLogRecordService {
 
 	public List<File> scanLogFilter(String path, String system, String host) {
 		List<String> filters = new ArrayList<>();
-		String dataFilter = getCurrentTime();
+		String dataFilter = dataConver.dataConverToString(new Date());
 		if (null == dataFilter) {
 			dataFilter = "\\S*";
 		}
@@ -61,7 +60,9 @@ public class SystemLogRecordService {
 	}
 
 	@SuppressWarnings("resource")
-	public List<SystemLogRecord> logRead(File file, String system, String host) {
+	public List<SystemLogRecord> logRead(File file, String system, String host,
+			int logId) {
+		// TODO limit file num ?
 		List<SystemLogRecord> records = new ArrayList<>();
 
 		String str = "";
@@ -75,21 +76,13 @@ public class SystemLogRecordService {
 			while ((str = bufferReader.readLine()) != null) {
 				String[] messages = str.split("\\|");
 				records.add(dataConver.dataConverToRecord(messages, system,
-						host));
+						host, logId));
 			}
 		} catch (Exception e) {
 			logger.error("");
 		}
 
 		return records;
-	}
-
-	private String getCurrentTime() {
-		Date now = new Date();
-		StringBuilder current = new StringBuilder();
-		current.append(DateUtils.getYear(now)).append(DateUtils.getMonth(now))
-				.append(DateUtils.getDay(now));
-		return current.toString();
 	}
 
 	@Inject

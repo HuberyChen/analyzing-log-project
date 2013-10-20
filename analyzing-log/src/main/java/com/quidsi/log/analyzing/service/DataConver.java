@@ -20,8 +20,9 @@ public class DataConver {
 	}
 
 	public SystemLogRecord dataConverToRecord(String[] messages, String system,
-			String host) {
+			String host, int logId) {
 		SystemLogRecord record = new SystemLogRecord();
+		record.setLogId(logId);
 		record.setSystem(system);
 		record.setHost(host);
 		record.setLogTime(dataConverToDate(messages[0]));
@@ -45,5 +46,12 @@ public class DataConver {
 		}
 		return DateUtils.date(dateTime[0], dateTime[1], dateTime[2],
 				dateTime[3], dateTime[4], dateTime[5]);
+	}
+
+	public String dataConverToString(Date date) {
+		StringBuilder current = new StringBuilder();
+		current.append(DateUtils.getYear(date)).append(DateUtils.getMonth(date))
+				.append(DateUtils.getDay(date));
+		return current.toString();
 	}
 }

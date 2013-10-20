@@ -43,7 +43,7 @@ public class SystemLogRecordController {
 	@RequestMapping(value = "/log/path", method = RequestMethod.GET)
 	@ResponseBody
 	@Track(warningThresholdInMs = 5000)
-	public void LogRead(@Valid @RequestParam String path) {
+	public void ActionLogRead(@Valid @RequestParam String path) {
 		for (int i = 0; i < systems.length; i++) {
 			String system = systems[i];
 			for (int j = 0; j < hosts.length; j++) {
@@ -57,11 +57,12 @@ public class SystemLogRecordController {
 						AnalyzedLog analyzedLog = analyzedLogService
 								.getAnalyzedLogByName(file.getName());
 						if (null != analyzedLog) {
-							analyzedLogService.save(dataConver
-									.dataConverToAnalyzedLog(file.getName()));
+							int logId = analyzedLogService.save(dataConver
+									.dataConverToAnalyzedLog(file.getName()
+											.replace(file.getParent(), "")));
 							systemLogRecordService
 									.saveList(systemLogRecordService.logRead(
-											file, system, host));
+											file, system, host, logId));
 						}
 					}
 				}
