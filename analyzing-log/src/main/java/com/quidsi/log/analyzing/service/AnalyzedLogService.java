@@ -18,6 +18,10 @@ public class AnalyzedLogService {
 		return analyzedLogDao.save(log);
 	}
 
+	public AnalyzedLog getAnalyzedLogByName(String logName) {
+		return analyzedLogDao.getAnalyzedLogByName(logName);
+	}
+
 	@Inject
 	public void setAnalyzedLogDao(AnalyzedLogDao analyzedLogDao) {
 		this.analyzedLogDao = analyzedLogDao;

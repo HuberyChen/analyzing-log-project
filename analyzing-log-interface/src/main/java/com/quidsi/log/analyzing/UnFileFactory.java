@@ -1,53 +1,56 @@
 package com.quidsi.log.analyzing;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class UnFileFactory implements IFileOperation {
 
-    public void fileOpeartion(String filePath) {
-        deCompression(filePath);
-    }
+	private final Logger logger = LoggerFactory.getLogger(UnFileFactory.class);
 
-    public static final String GZ_POSTFIX = ".gz";
+	public void fileOpeartion(String filePath) {
+		deCompression(filePath);
+	}
 
-    private void deCompression(String filePath) {
-        if (filePath.endsWith(GZ_POSTFIX)) {
-            unGz(filePath);
-        }
-    }
+	public static final String GZ_POSTFIX = ".gz";
 
-    @SuppressWarnings("resource")
-    private void unGz(String srcGzPath) {
-        File file = new File(srcGzPath);
-        StringBuilder dstDirectoryPath = new StringBuilder();
-        dstDirectoryPath.append(file.getParent());
-        GZIPInputStream in;
-        try {
-            in = new GZIPInputStream(new FileInputStream(srcGzPath));
+	private void deCompression(String filePath) {
+		if (filePath.endsWith(GZ_POSTFIX)) {
+			unGz(filePath);
+		}
+	}
 
-            // Transfer bytes from the compressed file to the output file
-            byte[] buf = new byte[1024];
-            int len;
+	@SuppressWarnings("resource")
+	private void unGz(String srcGzPath) {
+		File file = new File(srcGzPath);
+		StringBuilder dstDirectoryPath = new StringBuilder();
+		dstDirectoryPath.append(file.getParent());
+		try (GZIPInputStream in = new GZIPInputStream(new FileInputStream(
+				srcGzPath))) {
 
-            // Open the output file
-            srcGzPath = srcGzPath.replace(dstDirectoryPath.toString(), "");
-            FileUtils.folderIsExists(dstDirectoryPath.append("//decompression").toString());
-            File outFile = new File(dstDirectoryPath.append(srcGzPath.replace(".gz", "")).toString());
-            if (!outFile.exists()) {
-                OutputStream out = new FileOutputStream(outFile);
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
+			byte[] buf = new byte[1024];
+			int len;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			srcGzPath = srcGzPath.replace(dstDirectoryPath.toString(), "");
+			FileUtils.folderIsExists(dstDirectoryPath.append("//decompression")
+					.toString());
+			File outFile = new File(dstDirectoryPath.append(
+					srcGzPath.replace(".gz", "")).toString());
+			if (!outFile.exists()) {
+				OutputStream out = new FileOutputStream(outFile);
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+			}
 
-    }
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+	}
 }
