@@ -7,22 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name = "Analyzed_Log_List")
-public class AnalyzedLog {
+@Entity(name = "Decomposed_Log_List")
+public class DecomposedLog {
 
-    @Id
     @GeneratedValue
+    @Id
     @Column(name = "Id")
     private int Id;
 
     @Column(name = "Name")
     private String name;
 
-    @Column(name = "Type")
-    private String type;
-
-    @Column(name = "AnalyzedDate")
-    private Date analyzedDate;
+    @Column(name = "DecomposedDate")
+    private Date DecomposedDate;
 
     public int getId() {
         return Id;
@@ -40,20 +37,11 @@ public class AnalyzedLog {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public Date getDecomposedDate() {
+        return DecomposedDate;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDecomposedDate(Date decomposedDate) {
+        DecomposedDate = decomposedDate;
     }
-
-    public Date getAnalyzedDate() {
-        return analyzedDate;
-    }
-
-    public void setAnalyzedDate(Date analyzedDate) {
-        this.analyzedDate = analyzedDate;
-    }
-
 }

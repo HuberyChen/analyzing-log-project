@@ -11,26 +11,26 @@ import com.quidsi.log.analyzing.domain.SystemLogRecord;
 
 public class LogDaoTest extends SpringTest {
 
-	private SystemLogRecordDao dao;
+    private SystemLogRecordDao dao;
 
-	@Test
-	public void logRecordDaoTest() {
-		SystemLogRecord record = new SystemLogRecord();
-		record.setElapsedTime(1);
-		record.setErrorCode("404");
-		record.setExceptionMsg("");
-		record.setHost("1");
-		record.setInterfaceName("");
-		record.setLogAddress("");
-		record.setLogTime(new Date());
-		record.setRequestMethod("");
-		record.setStatus("");
-		dao.save(record);
-	}
+    @Test
+    public void logRecordDaoTest() {
+        SystemLogRecord record = new SystemLogRecord();
+        record.setElapsedTime(1);
+        record.setErrorCode("404");
+        record.setExceptionMsg("");
+        record.setHost("1");
+        record.setInterfaceName("");
+        record.setLogAddress("");
+        record.setRecordTime(new Date());
+        record.setRequestMethod("");
+        record.setStatus("");
+        dao.save(record);
+    }
 
-	@Inject
-	public void setDao(SystemLogRecordDao dao) {
-		this.dao = dao;
-	}
+    @Inject
+    public void setDao(SystemLogRecordDao dao) {
+        this.dao = dao;
+    }
 
 }

@@ -4,147 +4,144 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "System_Log_Record")
 public class SystemLogRecord {
 
-	@Id
-	@GeneratedValue
-	@Column(name = "Id")
-	private int id;
+    @Id
+    @GeneratedValue
+    @Column(name = "Id")
+    private int id;
 
-	@Column(name = "LogId")
-	private int logId;
+    @Column(name = "LogId")
+    private int logId;
 
-	@Column(name = "LogTime")
-	private Date logTime;
+    @Column(name = "RecordTime")
+    private Date recordTime;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "System")
-	private String system;
+    @Column(name = "System")
+    private String system;
 
-	public int getId() {
-		return id;
-	}
+    @Column(name = "Host")
+    private String host;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Column(name = "Status")
+    private String status;
 
-	public int getLogId() {
-		return logId;
-	}
+    @Column(name = "Interface")
+    private String interfaceName;
 
-	public void setLogId(int logId) {
-		this.logId = logId;
-	}
+    @Column(name = "ElapsedTime")
+    private int elapsedTime;
 
-	public Date getLogTime() {
-		return logTime;
-	}
+    @Column(name = "RequestMethod")
+    private String requestMethod;
 
-	public void setLogTime(Date logTime) {
-		this.logTime = logTime;
-	}
+    @Column(name = "ErrorCode")
+    private String errorCode;
 
-	public String getSystem() {
-		return system;
-	}
+    @Column(name = "ExceptionMsg")
+    private String exceptionMsg;
 
-	public void setSystem(String system) {
-		this.system = system;
-	}
+    @Column(name = "LogAddress")
+    private String logAddress;
 
-	public String getHost() {
-		return host;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public int getLogId() {
+        return logId;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setLogId(int logId) {
+        this.logId = logId;
+    }
 
-	public String getInterfaceName() {
-		return interfaceName;
-	}
+    public Date getRecordTime() {
+        return recordTime;
+    }
 
-	public void setInterfaceName(String interfaceName) {
-		this.interfaceName = interfaceName;
-	}
+    public void setRecordTime(Date recordTime) {
+        this.recordTime = recordTime;
+    }
 
-	public int getElapsedTime() {
-		return elapsedTime;
-	}
+    public String getSystem() {
+        return system;
+    }
 
-	public void setElapsedTime(int elapsedTime) {
-		this.elapsedTime = elapsedTime;
-	}
+    public void setSystem(String system) {
+        this.system = system;
+    }
 
-	public String getRequestMethod() {
-		return requestMethod;
-	}
+    public String getHost() {
+        return host;
+    }
 
-	public void setRequestMethod(String requestMethod) {
-		this.requestMethod = requestMethod;
-	}
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	public String getErrorCode() {
-		return errorCode;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getExceptionMsg() {
-		return exceptionMsg;
-	}
+    public String getInterfaceName() {
+        return interfaceName;
+    }
 
-	public void setExceptionMsg(String exceptionMsg) {
-		this.exceptionMsg = exceptionMsg;
-	}
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
+    }
 
-	public String getLogAddress() {
-		return logAddress;
-	}
+    public int getElapsedTime() {
+        return elapsedTime;
+    }
 
-	public void setLogAddress(String logAddress) {
-		this.logAddress = logAddress;
-	}
+    public void setElapsedTime(int elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
 
-	@Column(name = "Host")
-	private String host;
+    public String getRequestMethod() {
+        return requestMethod;
+    }
 
-	@Column(name = "Status")
-	private String status;
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
+    }
 
-	@Column(name = "Interface")
-	private String interfaceName;
+    public String getErrorCode() {
+        return errorCode;
+    }
 
-	@Column(name = "ElapsedTime")
-	private int elapsedTime;
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
 
-	@Column(name = "RequestMethod")
-	private String requestMethod;
+    public String getExceptionMsg() {
+        return exceptionMsg;
+    }
 
-	@Column(name = "ErrorCode")
-	private String errorCode;
+    public void setExceptionMsg(String exceptionMsg) {
+        this.exceptionMsg = exceptionMsg;
+    }
 
-	@Column(name = "ExceptionMsg")
-	private String exceptionMsg;
+    public String getLogAddress() {
+        return logAddress;
+    }
 
-	@Column(name = "LogAddress")
-	private String logAddress;
+    public void setLogAddress(String logAddress) {
+        this.logAddress = logAddress;
+    }
 
 }

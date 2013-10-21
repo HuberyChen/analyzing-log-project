@@ -1,4 +1,4 @@
-package com.quidsi.log.analyzing.util;
+package com.quidsi.log.analyzing.utils;
 
 
 import java.io.File;

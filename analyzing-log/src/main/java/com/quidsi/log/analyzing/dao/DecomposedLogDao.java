@@ -8,23 +8,23 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Repository;
 
 import com.quidsi.core.database.JPAAccess;
-import com.quidsi.log.analyzing.domain.AnalyzedLog;
+import com.quidsi.log.analyzing.domain.DecomposedLog;
 
 @Repository
-public class AnalyzedLogDao {
+public class DecomposedLogDao {
 
     private JPAAccess jpaAccess;
 
-    public int save(AnalyzedLog log) {
+    public int save(DecomposedLog log) {
         jpaAccess.save(log);
         return log.getId();
     }
 
-    public AnalyzedLog getAnalyzedLogByName(String logName) {
+    public DecomposedLog getDecomposedLogByName(String name) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
-        params.put("Name", logName);
-        sql.append("from ").append(AnalyzedLog.class.getName()).append(" where Name = :Name");
+        params.put("name", name);
+        sql.append("from ").append(DecomposedLog.class.getName()).append(" where name = :name");
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
