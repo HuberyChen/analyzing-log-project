@@ -1,4 +1,4 @@
-package com.quidsi.log.analyzing;
+package com.quidsi.log.analyzing.util;
 
 
 public abstract class Decorator implements IFileScanOperation {
