@@ -25,44 +25,51 @@ import com.quidsi.log.analyzing.utils.ScanUtils;
 @Controller
 public class APILogController {
 
-    private APIHostService apiHostService;
-    private APILogService apiLogService;
-    private DataConver dataConver;
+	private APIHostService apiHostService;
+	private APILogService apiLogService;
+	private DataConver dataConver;
 
-    @RequestMapping(value = "/api/host/log", method = RequestMethod.GET)
-    @ResponseBody
-    @Track(warningThresholdInMs = 5000)
-    public void scanAPIHostLog(@Valid @RequestParam String root) {
-        List<APIHost> hostList = apiHostService.getApiHosts();
-        if (!CollectionUtils.isEmpty(hostList)) {
-            for (APIHost apiHost : hostList) {
-                Map<String, List<String>> filterMap = apiLogService.initializeFilters(apiHost.getApiName(), apiHost.getHostName());
-                List<File> logs = ScanUtils.scan(root, filterMap.get("pathFilters"), filterMap.get("nameFilters"));
-                if (!CollectionUtils.isEmpty(logs)) {
-                    for (File log : logs) {
-                        APILog apiLog = dataConver.dataConverToApiLog(log.getName(), apiHost.getApiName(), apiHost.getHostName(), log.getAbsolutePath());
-                        if (null == apiLogService.getApiLogByName(apiLog.getLogName(), apiLog.getApiName(), apiLog.getHostName())) {
-                            apiLogService.save(apiLog);
-                        }
-                    }
-                }
-            }
-        }
-    }
+	@RequestMapping(value = "/api/host/log", method = RequestMethod.GET)
+	@ResponseBody
+	@Track(warningThresholdInMs = 5000)
+	public void scanAPIHostLog(@Valid @RequestParam String root) {
+		List<APIHost> hostList = apiHostService.getApiHosts();
+		if (!CollectionUtils.isEmpty(hostList)) {
+			for (APIHost apiHost : hostList) {
+				Map<String, List<String>> filterMap = apiLogService
+						.initializeFilters(apiHost.getApiName(),
+								apiHost.getHostName());
+				List<File> logs = ScanUtils.scan(root,
+						filterMap.get("pathFilters"),
+						filterMap.get("nameFilters"));
+				if (!CollectionUtils.isEmpty(logs)) {
+					for (File log : logs) {
+						APILog apiLog = dataConver.dataConverToApiLog(log,
+								apiHost);
+						if (null == apiLogService.getApiLogByName(
+								apiLog.getLogName(), apiLog.getApiName(),
+								apiLog.getHostName())) {
+							apiLogService.save(apiLog);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    @Inject
-    public void setApiHostService(APIHostService apiHostService) {
-        this.apiHostService = apiHostService;
-    }
+	@Inject
+	public void setApiHostService(APIHostService apiHostService) {
+		this.apiHostService = apiHostService;
+	}
 
-    @Inject
-    public void setApiLogService(APILogService apiLogService) {
-        this.apiLogService = apiLogService;
-    }
+	@Inject
+	public void setApiLogService(APILogService apiLogService) {
+		this.apiLogService = apiLogService;
+	}
 
-    @Inject
-    public void setDataConver(DataConver dataConver) {
-        this.dataConver = dataConver;
-    }
+	@Inject
+	public void setDataConver(DataConver dataConver) {
+		this.dataConver = dataConver;
+	}
 
 }

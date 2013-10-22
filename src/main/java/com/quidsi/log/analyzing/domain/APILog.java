@@ -8,72 +8,74 @@ import javax.persistence.Id;
 @Entity(name = "Log_List")
 public class APILog {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "Id")
-    private int Id;
+	public final static String LOG_TYPE = "action";
 
-    @Column(name = "LogName")
-    private String logName;
+	@Id
+	@GeneratedValue
+	@Column(name = "Id")
+	private int Id;
 
-    @Column(name = "APIName")
-    private String apiName;
+	@Column(name = "LogName")
+	private String logName;
 
-    @Column(name = "HostName")
-    private String hostName;
+	@Column(name = "APIName")
+	private String apiName;
 
-    @Column(name = "LogType")
-    private String logType;
+	@Column(name = "HostName")
+	private String hostName;
 
-    @Column(name = "AbsolutePath")
-    private String absolutePath;
+	@Column(name = "LogType")
+	private String logType;
 
-    public int getId() {
-        return Id;
-    }
+	@Column(name = "AbsolutePath")
+	private String absolutePath;
 
-    public void setId(int id) {
-        Id = id;
-    }
+	public int getId() {
+		return Id;
+	}
 
-    public String getLogName() {
-        return logName;
-    }
+	public void setId(int id) {
+		Id = id;
+	}
 
-    public void setLogName(String logName) {
-        this.logName = logName;
-    }
+	public String getLogName() {
+		return logName;
+	}
 
-    public String getApiName() {
-        return apiName;
-    }
+	public void setLogName(String logName) {
+		this.logName = logName;
+	}
 
-    public void setApiName(String apiName) {
-        this.apiName = apiName;
-    }
+	public String getApiName() {
+		return apiName;
+	}
 
-    public String getHostName() {
-        return hostName;
-    }
+	public void setApiName(String apiName) {
+		this.apiName = apiName;
+	}
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
-    }
+	public String getHostName() {
+		return hostName;
+	}
 
-    public String getLogType() {
-        return logType;
-    }
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
 
-    public void setLogType(String logType) {
-        this.logType = logType;
-    }
+	public String getLogType() {
+		return logType;
+	}
 
-    public String getAbsolutePath() {
-        return absolutePath;
-    }
+	public void setLogType(String logType) {
+		this.logType = logType;
+	}
 
-    public void setAbsolutePath(String absolutePath) {
-        this.absolutePath = absolutePath;
-    }
+	public String getAbsolutePath() {
+		return absolutePath;
+	}
+
+	public void setAbsolutePath(String absolutePath) {
+		this.absolutePath = absolutePath;
+	}
 
 }
