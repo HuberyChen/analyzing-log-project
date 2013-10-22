@@ -19,6 +19,7 @@ import com.quidsi.log.analyzing.domain.APIHost;
 import com.quidsi.log.analyzing.domain.APILog;
 import com.quidsi.log.analyzing.service.APIHostService;
 import com.quidsi.log.analyzing.service.APILogService;
+import com.quidsi.log.analyzing.service.DataConver;
 import com.quidsi.log.analyzing.utils.ScanUtils;
 
 @Controller
@@ -26,6 +27,7 @@ public class APILogController {
 
     private APIHostService apiHostService;
     private APILogService apiLogService;
+    private DataConver dataConver;
 
     @RequestMapping(value = "/api/host/log", method = RequestMethod.GET)
     @ResponseBody
@@ -34,12 +36,12 @@ public class APILogController {
         List<APIHost> hostList = apiHostService.getApiHosts();
         if (!CollectionUtils.isEmpty(hostList)) {
             for (APIHost apiHost : hostList) {
-                Map<String, List<String>> filterMap = apiLogService.initializeFilters(apiHost);
+                Map<String, List<String>> filterMap = apiLogService.initializeFilters(apiHost.getApiName(), apiHost.getHostName());
                 List<File> logs = ScanUtils.scan(root, filterMap.get("pathFilters"), filterMap.get("nameFilters"));
                 if (!CollectionUtils.isEmpty(logs)) {
                     for (File log : logs) {
-                        APILog apiLog = apiLogService.getApiLogByName(log.getName(), apiHost.getApiName(), apiHost.getHostName());
-                        if (null == apiLog) {
+                        APILog apiLog = dataConver.dataConverToApiLog(log.getName(), apiHost.getApiName(), apiHost.getHostName(), log.getAbsolutePath());
+                        if (null == apiLogService.getApiLogByName(apiLog.getLogName(), apiLog.getApiName(), apiLog.getHostName())) {
                             apiLogService.save(apiLog);
                         }
                     }
@@ -56,6 +58,11 @@ public class APILogController {
     @Inject
     public void setApiLogService(APILogService apiLogService) {
         this.apiLogService = apiLogService;
+    }
+
+    @Inject
+    public void setDataConver(DataConver dataConver) {
+        this.dataConver = dataConver;
     }
 
 }

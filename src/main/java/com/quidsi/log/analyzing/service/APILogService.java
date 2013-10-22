@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.quidsi.log.analyzing.dao.APILogDao;
-import com.quidsi.log.analyzing.domain.APIHost;
 import com.quidsi.log.analyzing.domain.APILog;
 
 @Service
@@ -28,12 +27,12 @@ public class APILogService {
         return apiLogDao.getApiLogsByName(logName, apiName, hostName);
     }
 
-    public Map<String, List<String>> initializeFilters(APIHost apiHost) {
+    public Map<String, List<String>> initializeFilters(String apiName, String hostName) {
         Map<String, List<String>> filterMap = new HashMap<>();
 
         List<String> pathFilters = new ArrayList<>();
-        pathFilters.add("[//S]*" + apiHost.getApiName() + "[//S]*");
-        pathFilters.add("[//S]*" + apiHost.getHostName() + "[//S]*");
+        pathFilters.add("[\\S]*" + apiName + "[\\S]*");
+        pathFilters.add("[\\S]*" + hostName + "[\\S]*");
         filterMap.put("pathFilters", pathFilters);
 
         List<String> nameFilters = new ArrayList<>();

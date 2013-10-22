@@ -6,10 +6,23 @@ import org.springframework.stereotype.Service;
 
 import com.quidsi.core.util.DateUtils;
 import com.quidsi.log.analyzing.domain.APIHost;
+import com.quidsi.log.analyzing.domain.APILog;
 import com.quidsi.log.analyzing.domain.SystemAPI;
 
 @Service
 public class DataConver {
+
+    public APILog dataConverToApiLog(String logName, String apiName, String hostName, String absolutePath) {
+        APILog apiLog = new APILog();
+        if (logName.endsWith(".gz")) {
+            logName = logName.replace(".gz", "");
+        }
+        apiLog.setLogName(logName.replace(".log", ""));
+        apiLog.setApiName(apiName);
+        apiLog.setHostName(hostName);
+        apiLog.setAbsolutePath(absolutePath);
+        return apiLog;
+    }
 
     public APIHost dataConverToApiHost(String apiName, String hostName) {
         APIHost apiHost = new APIHost();
