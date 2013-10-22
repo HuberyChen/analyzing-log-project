@@ -1,0 +1,6 @@
+CREATE TABLE Action_Log_List(
+	Id INT IDENTITY(1,1) NOT NULL ,
+	LogId INT NOT NULL ,
+	Status VARCHAR(10) NOT NULL ,
+	OperatedDate DATETIME NULL ,
+)
