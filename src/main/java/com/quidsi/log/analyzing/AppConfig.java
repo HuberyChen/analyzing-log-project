@@ -47,7 +47,7 @@ public class AppConfig extends DefaultAppConfig {
         dataSource.setUsername(env.getRequiredProperty("jdbc.username"));
         dataSource.setPassword(EncryptionUtils.decrypt(env.getRequiredProperty("jdbc.password"), new ClasspathResource("private.key")));
         dataSource.setValidationQuery("select 1");
-        dataSource.setDatabaseName("GiftCoDB");
+        dataSource.setDatabaseName("APILogDB");
         dataSource.setDefaultTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
         return dataSource;
     }

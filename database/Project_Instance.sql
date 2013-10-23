@@ -1,0 +1,5 @@
+CREATE TABLE Project_Instance(
+	Id INT IDENTITY(1,1) NOT NULL ,
+	ServerName VARCHAR(30) NOT NULL ,
+	ProjectId INT NOT NULL ,
+)
