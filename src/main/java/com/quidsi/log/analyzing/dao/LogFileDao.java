@@ -34,6 +34,16 @@ public class LogFileDao {
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
+    public List<LogFile> getLogFilesByFuzzyName(String logName, int projectId, int serverId) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        params.put("ProjectId", projectId);
+        params.put("ServerId", serverId);
+        params.put("LogName", "%" + logName + "%");
+        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName");
+        return jpaAccess.find(sql.toString(), params);
+    }
+
     public List<LogFile> getLogFileByLogType(String logType) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
@@ -56,14 +66,6 @@ public class LogFileDao {
         params.put("IsAnalyzed", isAnalyzed);
         sql.append("from ").append(LogFile.class.getName()).append(" where IsAnalyzed = :IsAnalyzed");
         return jpaAccess.find(sql.toString(), params);
-    }
-
-    public Integer getMaxHourLogFilesByDate(String date) {
-        StringBuilder sql = new StringBuilder();
-        Map<String, Object> params = new HashMap<>();
-        params.put("Date", "%" + date.trim() + "%");
-        sql.append("select Max(Hour) from ").append(LogFile.class.getName()).append(" where LogName like :Date");
-        return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
     @Inject

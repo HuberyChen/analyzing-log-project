@@ -42,9 +42,10 @@ public final class FileFactory {
         return messageMap;
     }
 
-    public static void unGz(File file) {
+    public static String unGz(File file) {
         StringBuilder dstDirectoryPath = new StringBuilder();
         String srcGzPath = file.getName();
+        String absolutePath = "";
         dstDirectoryPath.append(file.getParent());
         try (GZIPInputStream in = new GZIPInputStream(new FileInputStream(file))) {
 
@@ -64,10 +65,11 @@ public final class FileFactory {
                     logger.error(e.getMessage());
                 }
             }
+            absolutePath = outFile.getAbsolutePath();
 
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-
+        return absolutePath;
     }
 }

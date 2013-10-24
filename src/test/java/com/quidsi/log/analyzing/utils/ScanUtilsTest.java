@@ -1,6 +1,5 @@
 package com.quidsi.log.analyzing.utils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,7 @@ public class ScanUtilsTest {
 
         filterMap.put("nameFilters", nameFilters);
 
-        List<File> logs = ScanUtils.scan("D:\\test", filterMap.get("pathFilters"), filterMap.get("nameFilters"));
+        List<String> logs = ScanUtils.scan("D:\\test", filterMap.get("pathFilters"), filterMap.get("nameFilters"));
         System.out.println("");
     }
 

@@ -43,9 +43,6 @@ public class LogFile {
     @Column(name = "IsAnalyzed")
     private IsAnalyzed isAnalyzed;
 
-    @Column(name = "Sequence")
-    private int sequence;
-
     public enum IsDecomposed {
         Y, N
     }
@@ -116,14 +113,6 @@ public class LogFile {
 
     public void setIsAnalyzed(IsAnalyzed isAnalyzed) {
         this.isAnalyzed = isAnalyzed;
-    }
-
-    public int getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
     }
 
 }

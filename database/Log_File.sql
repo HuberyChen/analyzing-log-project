@@ -7,5 +7,4 @@ CREATE TABLE Log_File (
 	AbsolutePath VARCHAR(200) NULL ,
 	IsDecomposed CHAR(1) NOT NULL ,
 	IsAnalyzed CHAR(1) NOT NULL ,
-	Sequence INT NULL ,
 )

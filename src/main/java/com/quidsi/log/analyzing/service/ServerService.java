@@ -24,6 +24,10 @@ public class ServerService {
         return serverDao.getServerByProjectIdAndServerName(projectId, serverName);
     }
 
+    public List<Server> getServersByProjectId(int projectId) {
+        return serverDao.getServersByProjectId(projectId);
+    }
+
     public List<Server> getServers() {
         return serverDao.getServers();
     }

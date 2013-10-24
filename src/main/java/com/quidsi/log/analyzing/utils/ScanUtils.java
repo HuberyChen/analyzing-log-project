@@ -38,8 +38,8 @@ public class ScanUtils {
         return file.getName();
     }
 
-    public static List<File> scan(String path, List<String> pathFilters, List<String> nameFilters) {
-        List<File> logs = new ArrayList<>();
+    public static List<String> scan(String path, List<String> pathFilters, List<String> nameFilters) {
+        List<String> logs = new ArrayList<>();
 
         File root = new File(path);
         if (root.exists()) {
@@ -99,7 +99,7 @@ public class ScanUtils {
                         }
                     }
                     if (pathIsMatch) {
-                        logs.add(file);
+                        logs.add(file.getAbsolutePath());
                     }
                 }
 
