@@ -14,14 +14,17 @@ public class LogFileWrapper {
 
     private Date date;
 
+    private String path;
+
     private List<LogFile> allLogFiles = new ArrayList<>();
 
-    private List<LogFile> logFilesIsExisted = new ArrayList<>();
+    private List<LogFile> logFilesHistories = new ArrayList<>();
 
-    public LogFileWrapper(Project project, Server server, Date date) {
+    public LogFileWrapper(Project project, Server server, Date date, String path) {
         this.project = project;
         this.server = server;
         this.date = date;
+        this.path = path;
     }
 
     public void addAllLogFiles(List<LogFile> logFiles) {
@@ -33,13 +36,57 @@ public class LogFileWrapper {
         }
     }
 
-    public void addLogFilesIsExisted(List<LogFile> logFiles) {
+    public void addLogFilesHistories(List<LogFile> logFiles) {
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }
         for (LogFile logFile : logFiles) {
-            logFilesIsExisted.add(logFile);
+            logFilesHistories.add(logFile);
         }
+    }
+
+    public List<LogFile> getLogFileNotExisted() {
+        List<LogFile> logFilesNotExisted = new ArrayList<>();
+        if (CollectionUtils.isEmpty(allLogFiles)) {
+            return null;
+        }
+
+        for (LogFile logFile : allLogFiles) {
+            if (judgeListIsContainLogFile(logFile, logFilesHistories)) {
+                continue;
+            }
+            logFilesNotExisted.add(logFile);
+        }
+        return logFilesNotExisted;
+    }
+
+    private boolean judgeListIsContainLogFile(LogFile logFile, List<LogFile> logFiles) {
+        boolean result = true;
+
+        if (CollectionUtils.isEmpty(logFiles)) {
+            result = false;
+        }
+
+        for (LogFile contrastLogFile : logFiles) {
+            if (judgeLogFileIsEqual(logFile, contrastLogFile)) {
+                continue;
+            }
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean judgeLogFileIsEqual(LogFile logFile, LogFile contrastLogFile) {
+        if (!logFile.getLogName().equals(contrastLogFile.getLogName())) {
+            return false;
+        }
+        if (logFile.getProjectId() != contrastLogFile.getProjectId()) {
+            return false;
+        }
+        if (logFile.getServerId() != contrastLogFile.getServerId()) {
+            return false;
+        }
+        return true;
     }
 
     public Project getProject() {
@@ -66,12 +113,20 @@ public class LogFileWrapper {
         this.date = date;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public List<LogFile> getAllLogFiles() {
         return allLogFiles;
     }
 
-    public List<LogFile> getLogFilesIsExisted() {
-        return logFilesIsExisted;
+    public List<LogFile> getLogFilesHistories() {
+        return logFilesHistories;
     }
 
 }

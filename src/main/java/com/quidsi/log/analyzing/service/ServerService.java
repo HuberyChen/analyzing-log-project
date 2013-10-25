@@ -20,6 +20,10 @@ public class ServerService {
         return serverDao.save(server);
     }
 
+    public List<Server> getServersByServerName(String serverName) {
+        return serverDao.getServersByServerName(serverName);
+    }
+
     public Server getServerByProjectIdAndServerName(int projectId, String serverName) {
         return serverDao.getServerByProjectIdAndServerName(projectId, serverName);
     }
@@ -36,4 +40,5 @@ public class ServerService {
     public void setServerDao(ServerDao serverDao) {
         this.serverDao = serverDao;
     }
+
 }

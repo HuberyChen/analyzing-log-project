@@ -49,12 +49,6 @@ public class LogFileService {
         return logFileDao.getLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
     }
 
-    public String dateConverToString(Date date) {
-        StringBuilder dateString = new StringBuilder();
-        dateString.append(DateUtils.getYear(date)).append("-").append(DateUtils.getMonth(date) + 1).append("-").append(DateUtils.getDay(date));
-        return dateString.toString();
-    }
-
     public List<LogFile> getLogFilesByType(String logType) {
         return logFileDao.getLogFileByLogType(logType);
     }
@@ -89,6 +83,15 @@ public class LogFileService {
 
     public List<LogFile> getLogFilesByIsAnalyzed(String isAnalyzed) {
         return logFileDao.getLogFilesByIsAnalyzed(isAnalyzed);
+    }
+
+    private String dateConverToString(Date date) {
+        if (null == date) {
+            return "";
+        }
+        StringBuilder dateString = new StringBuilder();
+        dateString.append(DateUtils.getYear(date)).append("-").append(DateUtils.getMonth(date) + 1).append("-").append(DateUtils.getDay(date));
+        return dateString.toString();
     }
 
     @Inject

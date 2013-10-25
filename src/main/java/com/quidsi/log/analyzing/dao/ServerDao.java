@@ -29,6 +29,14 @@ public class ServerDao {
         return jpaAccess.find(sql.toString(), params);
     }
 
+    public List<Server> getServersByServerName(String serverName) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        params.put("ServerName", serverName);
+        sql.append("from ").append(Server.class.getName()).append(" where ServerName = :ServerName");
+        return jpaAccess.find(sql.toString(), params);
+    }
+
     public List<Server> getServers() {
         return jpaAccess.find("from " + Server.class.getName(), null);
     }
