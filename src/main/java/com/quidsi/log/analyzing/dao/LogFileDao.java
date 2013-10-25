@@ -44,6 +44,26 @@ public class LogFileDao {
         return jpaAccess.find(sql.toString(), params);
     }
 
+    public List<LogFile> getUncompressedLogFilesByFuzzyName(String logName, int projectId, int serverId) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        params.put("ProjectId", projectId);
+        params.put("ServerId", serverId);
+        params.put("LogName", "%" + logName + "%");
+        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName and IsDecomposed = N");
+        return jpaAccess.find(sql.toString(), params);
+    }
+
+    public List<LogFile> getAnalyzedLogFilesByFuzzyName(String logName, int projectId, int serverId) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        params.put("ProjectId", projectId);
+        params.put("ServerId", serverId);
+        params.put("LogName", "%" + logName + "%");
+        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName and IsAnalyzed = N");
+        return jpaAccess.find(sql.toString(), params);
+    }
+
     public List<LogFile> getLogFileByLogType(String logType) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
@@ -52,7 +72,7 @@ public class LogFileDao {
         return jpaAccess.find(sql.toString(), params);
     }
 
-    public List<LogFile> getLogFilesByIsDecomposed(String isDecomposed) {
+    public List<LogFile> getUncompressedLogFilesByLogFileWrapper(String isDecomposed) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("IsDecomposed", isDecomposed);

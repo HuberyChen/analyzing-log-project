@@ -15,6 +15,7 @@ import com.quidsi.core.util.Convert;
 import com.quidsi.core.util.DateUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.utils.FileFactory;
 
 @Component
@@ -23,8 +24,8 @@ public class LogDetailReader {
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
 
-    public void scanActionLogDetail() {
-        List<LogFile> logFiles = logFileService.getLogFilesByIsAnalyzed(LogFile.IsAnalyzed.N.toString());
+    public void scanActionLogDetail(LogFileWrapper logFileWrapper) {
+        List<LogFile> logFiles = logFileService.getAnalyzedLogFilesByLogFileWrapper(logFileWrapper);
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }

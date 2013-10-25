@@ -49,6 +49,20 @@ public class LogFileService {
         return logFileDao.getLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
     }
 
+    public List<LogFile> getUncompressedLogFilesByLogFileWrapper(LogFileWrapper logFileWrapper) {
+        Date date = logFileWrapper.getDate();
+        int projectId = logFileWrapper.getProject().getId();
+        int serverId = logFileWrapper.getServer().getId();
+        return logFileDao.getUncompressedLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
+    }
+
+    public List<LogFile> getAnalyzedLogFilesByLogFileWrapper(LogFileWrapper logFileWrapper) {
+        Date date = logFileWrapper.getDate();
+        int projectId = logFileWrapper.getProject().getId();
+        int serverId = logFileWrapper.getServer().getId();
+        return logFileDao.getAnalyzedLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
+    }
+
     public List<LogFile> getLogFilesByType(String logType) {
         return logFileDao.getLogFileByLogType(logType);
     }
@@ -75,14 +89,6 @@ public class LogFileService {
 
         filterMap.put("nameFilters", nameFilters);
         return filterMap;
-    }
-
-    public List<LogFile> getLogFilesByIsDecomposed(String isDecomposed) {
-        return logFileDao.getLogFilesByIsDecomposed(isDecomposed);
-    }
-
-    public List<LogFile> getLogFilesByIsAnalyzed(String isAnalyzed) {
-        return logFileDao.getLogFilesByIsAnalyzed(isAnalyzed);
     }
 
     private String dateConverToString(Date date) {

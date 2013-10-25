@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.utils.FileFactory;
 
 @Component
@@ -16,8 +17,18 @@ public class LogFileOperation {
 
     private LogFileService logFileService;
 
-    public void decompression() {
-        List<LogFile> uncompressionActionLogs = logFileService.getLogFilesByIsDecomposed(LogFile.IsDecomposed.N.toString());
+    private LogFilesLoader logFilesLoader;
+
+    public void saveLogFilesNotExisted(LogFileWrapper logFileWrapper) {
+        List<LogFile> logFilesNotExisted = logFilesLoader.logLoader(logFileWrapper).getLogFileNotExisted();
+        if (CollectionUtils.isEmpty(logFilesNotExisted)) {
+            return;
+        }
+        logFileService.saveList(logFilesNotExisted);
+    }
+
+    public void decompression(LogFileWrapper logFileWrapper) {
+        List<LogFile> uncompressionActionLogs = logFileService.getUncompressedLogFilesByLogFileWrapper(logFileWrapper);
         if (CollectionUtils.isEmpty(uncompressionActionLogs)) {
             return;
         }
@@ -32,6 +43,11 @@ public class LogFileOperation {
     @Inject
     public void setLogFileService(LogFileService logFileService) {
         this.logFileService = logFileService;
+    }
+
+    @Inject
+    public void setLogFilesLoader(LogFilesLoader logFilesLoader) {
+        this.logFilesLoader = logFilesLoader;
     }
 
 }

@@ -19,7 +19,7 @@ public class ActionLogAnalyzingControllerTest extends SpringServiceTest {
         ActionLogAnalyzingRequest request = new ActionLogAnalyzingRequest();
         request.setDate(new Date());
         request.setProjectName("GIFTCOSERVER");
-        request.setRoot("D:\\test");
+        request.setRoot("\\\\sharedoc\\文件交换区\\Java-Team\\prod log");
         request.setServerName("Prod-gcsvc1");
         mockMvc.perform(post("/project/instance/log/action").contentType(MediaType.APPLICATION_JSON).content(JSONBinder.binder(ActionLogAnalyzingRequest.class).toJSON(request))).andExpect(
                 status().isOk());

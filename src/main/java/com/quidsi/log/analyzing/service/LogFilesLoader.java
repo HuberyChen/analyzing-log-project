@@ -30,12 +30,12 @@ public class LogFilesLoader {
         logFileWrapper = initializeLogFileWrappers;
 
         loadAllFile();
-        loadActionLogFilesIsExisted();
+        loadActionLogFilesExisted();
 
         return logFileWrapper;
     }
 
-    private void loadActionLogFilesIsExisted() {
+    private void loadActionLogFilesExisted() {
         List<LogFile> logFilesIsExisted = logFileService.getLogFilesByLogFileWrapper(logFileWrapper);
         logFileWrapper.addLogFilesHistories(logFilesIsExisted);
     }
