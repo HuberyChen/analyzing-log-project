@@ -22,7 +22,7 @@ public class ActionLogAnalyzingRequest {
 	@XmlElement(name = "project")
 	private String projectName;
 
-	@XmlElement(name = "server")
+	@XmlElement(name = "instance")
 	private String serverName;
 
 	public Date getDate() {
