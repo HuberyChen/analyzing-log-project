@@ -2,6 +2,7 @@ package com.quidsi.log.analyzing.request;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,47 +12,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActionLogAnalyzingRequest {
 
-    @XmlElement(name = "root")
-    private String root;
+	@NotNull(message = "path is not null")
+	@XmlElement(name = "path")
+	private String path;
 
-    @XmlElement(name = "date")
-    private Date date;
+	@XmlElement(name = "date")
+	private Date date;
 
-    @XmlElement(name = "project")
-    private String projectName;
+	@XmlElement(name = "project")
+	private String projectName;
 
-    @XmlElement(name = "server")
-    private String serverName;
+	@XmlElement(name = "server")
+	private String serverName;
 
-    public String getRoot() {
-        return root;
-    }
+	public Date getDate() {
+		return date;
+	}
 
-    public void setRoot(String root) {
-        this.root = root;
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-    public Date getDate() {
-        return date;
-    }
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
 
-    public String getProjectName() {
-        return projectName;
-    }
+	public String getServerName() {
+		return serverName;
+	}
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
 
-    public String getServerName() {
-        return serverName;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
+	public void setPath(String path) {
+		this.path = path;
+	}
 }

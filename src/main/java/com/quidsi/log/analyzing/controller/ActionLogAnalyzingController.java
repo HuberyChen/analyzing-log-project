@@ -21,40 +21,42 @@ import com.quidsi.log.analyzing.service.LogFileOperation;
 @Controller
 public class ActionLogAnalyzingController {
 
-    private LogDetailReader logDetailReader;
-    private LogFileOperation logFileOperation;
-    private DataConver dataConver;
+	private LogDetailReader logDetailReader;
+	private LogFileOperation logFileOperation;
+	private DataConver dataConver;
 
-    @RequestMapping(value = "/project/instance/log/action", method = RequestMethod.POST)
-    @ResponseBody
-    public void actionLogAnalyzing(@Valid @RequestBody ActionLogAnalyzingRequest request) {
+	@RequestMapping(value = "/project/instance/log/action", method = RequestMethod.POST)
+	@ResponseBody
+	public void actionLogAnalyzing(
+			@Valid @RequestBody ActionLogAnalyzingRequest request) {
 
-        List<LogFileWrapper> logFileWrappers = dataConver.initializeLogFileWrappers(request);
+		List<LogFileWrapper> logFileWrappers = dataConver
+				.initializeLogFileWrappers(request);
 
-        if (CollectionUtils.isEmpty(logFileWrappers)) {
-            return;
-        }
+		if (CollectionUtils.isEmpty(logFileWrappers)) {
+			return;
+		}
 
-        for (LogFileWrapper logFileWrapper : logFileWrappers) {
-            logFileOperation.saveLogFilesNotExisted(logFileWrapper);
-            logFileOperation.decompression(logFileWrapper);
-            logDetailReader.scanActionLogDetail(logFileWrapper);
-        }
-    }
+		for (LogFileWrapper logFileWrapper : logFileWrappers) {
+			logFileOperation.saveLogFilesNotExisted(logFileWrapper);
+			logFileOperation.decompression(logFileWrapper);
+			logDetailReader.scanActionLogDetail(logFileWrapper);
+		}
+	}
 
-    @Inject
-    public void setLogDetailReader(LogDetailReader logDetailReader) {
-        this.logDetailReader = logDetailReader;
-    }
+	@Inject
+	public void setLogDetailReader(LogDetailReader logDetailReader) {
+		this.logDetailReader = logDetailReader;
+	}
 
-    @Inject
-    public void setLogFileOperation(LogFileOperation logFileOperation) {
-        this.logFileOperation = logFileOperation;
-    }
+	@Inject
+	public void setLogFileOperation(LogFileOperation logFileOperation) {
+		this.logFileOperation = logFileOperation;
+	}
 
-    @Inject
-    public void setDataConver(DataConver dataConver) {
-        this.dataConver = dataConver;
-    }
+	@Inject
+	public void setDataConver(DataConver dataConver) {
+		this.dataConver = dataConver;
+	}
 
 }
