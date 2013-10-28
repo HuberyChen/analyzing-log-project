@@ -5,6 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,12 +27,11 @@ public class ActionLogAnalyzingController extends RESTController {
     private LogDetailReader logDetailReader;
     private LogFileOperation logFileOperation;
     private DataConver dataConver;
+    private String path;
 
     @RequestMapping(value = "/project/instance/log/action", method = RequestMethod.POST)
     @ResponseBody
     public void actionLogAnalyzing(@Valid @RequestBody ActionLogAnalyzingRequest request) {
-
-        String path = "\\\\sharedoc\\文件交换区\\Java-Team\\prod log";
 
         List<LogFileWrapper> logFileWrappers = dataConver.initializeLogFileWrappers(request, path);
 
@@ -58,6 +59,11 @@ public class ActionLogAnalyzingController extends RESTController {
     @Inject
     public void setDataConver(DataConver dataConver) {
         this.dataConver = dataConver;
+    }
+
+    @Autowired
+    public void setPath(@Value("${portal.path}") String path) {
+        this.path = path;
     }
 
 }
