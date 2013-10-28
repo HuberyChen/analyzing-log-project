@@ -1,7 +1,6 @@
 package com.quidsi.log.analyzing.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.quidsi.core.util.DateUtils;
 import com.quidsi.log.analyzing.dao.LogFileDao;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
@@ -43,24 +41,24 @@ public class LogFileService {
     }
 
     public List<LogFile> getLogFilesByLogFileWrapper(LogFileWrapper logFileWrapper) {
-        Date date = logFileWrapper.getDate();
+        String date = logFileWrapper.getDate();
         int projectId = logFileWrapper.getProject().getId();
         int serverId = logFileWrapper.getServer().getId();
-        return logFileDao.getLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
+        return logFileDao.getLogFilesByFuzzyName(dateFormat(date), projectId, serverId);
     }
 
     public List<LogFile> getUncompressedLogFilesByLogFileWrapper(LogFileWrapper logFileWrapper) {
-        Date date = logFileWrapper.getDate();
+        String date = logFileWrapper.getDate();
         int projectId = logFileWrapper.getProject().getId();
         int serverId = logFileWrapper.getServer().getId();
-        return logFileDao.getUncompressedLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
+        return logFileDao.getUncompressedLogFilesByFuzzyName(dateFormat(date), projectId, serverId);
     }
 
     public List<LogFile> getAnalyzedLogFilesByLogFileWrapper(LogFileWrapper logFileWrapper) {
-        Date date = logFileWrapper.getDate();
+        String date = logFileWrapper.getDate();
         int projectId = logFileWrapper.getProject().getId();
         int serverId = logFileWrapper.getServer().getId();
-        return logFileDao.getAnalyzedLogFilesByFuzzyName(dateConverToString(date), projectId, serverId);
+        return logFileDao.getAnalyzedLogFilesByFuzzyName(dateFormat(date), projectId, serverId);
     }
 
     public List<LogFile> getLogFilesByType(String logType) {
@@ -79,24 +77,25 @@ public class LogFileService {
         }
 
         List<String> pathFilters = new ArrayList<>();
-        pathFilters.add("[\\S]*" + logFileWrapper.getProject().getName() + "[\\S]*");
-        pathFilters.add("[\\S]*" + logFileWrapper.getServer().getServerName() + "[\\S]*");
+        pathFilters.add("[\\S\\|\\s]*" + logFileWrapper.getProject().getName() + "[\\S\\|\\s]*");
+        pathFilters.add("[\\S\\|\\s]*" + logFileWrapper.getServer().getServerName() + "[\\S\\|\\s]*");
         filterMap.put("pathFilters", pathFilters);
 
         List<String> nameFilters = new ArrayList<>();
-        nameFilters.add("[\\S]*.log[\\S]*");
-        nameFilters.add("[\\S]*" + dateConverToString(logFileWrapper.getDate()) + "[\\S]*");
+        nameFilters.add("[\\S\\|\\s]*.log[\\S\\|\\s]*");
+        nameFilters.add("[\\S\\|\\s]*" + dateFormat(logFileWrapper.getDate()) + "[\\S\\|\\s]*");
 
         filterMap.put("nameFilters", nameFilters);
         return filterMap;
     }
 
-    private String dateConverToString(Date date) {
+    private String dateFormat(String date) {
         if (null == date) {
             return "";
         }
         StringBuilder dateString = new StringBuilder();
-        dateString.append(DateUtils.getYear(date)).append("-").append(DateUtils.getMonth(date) + 1).append("-").append(DateUtils.getDay(date));
+        String[] dateMessage = date.split("/");
+        dateString.append(dateMessage[2]).append("-").append(dateMessage[0]).append("-").append(dateMessage[1]);
         return dateString.toString();
     }
 

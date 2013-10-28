@@ -8,7 +8,7 @@ CREATE TABLE Action_Log_Detail
       ElapsedTime INT NULL ,
       RequestMethod VARCHAR(10) NULL ,
       ErrorCode VARCHAR(5) NULL ,
-      ExceptionMsg VARCHAR(100) NULL ,
-      LogAddress VARCHAR(100) NULL ,
+      ExceptionMsg VARCHAR(1000) NULL ,
+      LogAddress VARCHAR(200) NULL ,
       Extension VARCHAR(100) NULL ,
     )

@@ -50,7 +50,7 @@ public class LogFileDao {
         params.put("ProjectId", projectId);
         params.put("ServerId", serverId);
         params.put("LogName", "%" + logName + "%");
-        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName and IsDecomposed = N");
+        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName and IsDecomposed = 'N'");
         return jpaAccess.find(sql.toString(), params);
     }
 
@@ -60,7 +60,7 @@ public class LogFileDao {
         params.put("ProjectId", projectId);
         params.put("ServerId", serverId);
         params.put("LogName", "%" + logName + "%");
-        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName and IsAnalyzed = N");
+        sql.append("from ").append(LogFile.class.getName()).append(" where ProjectId = :ProjectId and ServerId = :ServerId and LogName like :LogName and IsAnalyzed = 'N'");
         return jpaAccess.find(sql.toString(), params);
     }
 

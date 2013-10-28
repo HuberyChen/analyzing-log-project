@@ -1,7 +1,6 @@
 package com.quidsi.log.analyzing.domain;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.util.CollectionUtils;
@@ -12,7 +11,7 @@ public class LogFileWrapper {
 
     private Server server;
 
-    private Date date;
+    private String date;
 
     private String path;
 
@@ -20,7 +19,7 @@ public class LogFileWrapper {
 
     private List<LogFile> logFilesHistories = new ArrayList<>();
 
-    public LogFileWrapper(Project project, Server server, Date date, String path) {
+    public LogFileWrapper(Project project, Server server, String date, String path) {
         this.project = project;
         this.server = server;
         this.date = date;
@@ -105,14 +104,6 @@ public class LogFileWrapper {
         this.server = server;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public String getPath() {
         return path;
     }
@@ -127,6 +118,14 @@ public class LogFileWrapper {
 
     public List<LogFile> getLogFilesHistories() {
         return logFilesHistories;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
 }
