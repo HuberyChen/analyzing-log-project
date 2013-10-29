@@ -9,14 +9,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProjectStatistic {
+public class ProjectInfomation {
 
     @XmlElement(name = "name")
     private String project;
 
     @XmlElementWrapper(name = "Instance")
     @XmlElement(name = "server")
-    private List<ServerStatistic> servers = new ArrayList<>();
+    private List<ServerInformation> servers = new ArrayList<>();
 
     public String getProject() {
         return project;
@@ -26,7 +26,7 @@ public class ProjectStatistic {
         this.project = project;
     }
 
-    public List<ServerStatistic> getServerList() {
+    public List<ServerInformation> getServerList() {
         return servers;
     }
 

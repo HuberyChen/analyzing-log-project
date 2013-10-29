@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.response.InformationResponse;
-import com.quidsi.log.analyzing.response.ProjectStatistic;
-import com.quidsi.log.analyzing.response.ServerStatistic;
+import com.quidsi.log.analyzing.response.ProjectInfomation;
+import com.quidsi.log.analyzing.response.ServerInformation;
 import com.quidsi.log.analyzing.service.ProjectService;
 import com.quidsi.log.analyzing.service.ServerService;
 
 @Controller
-public class AnalyzingLogStatisticController {
+public class AnalyzingLogInformationController {
 
     private ProjectService projectService;
 
@@ -34,20 +34,20 @@ public class AnalyzingLogStatisticController {
             return response;
         }
         for (Project project : projectList) {
-            ProjectStatistic projectStatistic = new ProjectStatistic();
-            projectStatistic.setProject(project.getName());
+            ProjectInfomation projectInfomation = new ProjectInfomation();
+            projectInfomation.setProject(project.getName());
 
             List<Server> serverList = serverService.getServersByProjectId(project.getId());
             if (CollectionUtils.isEmpty(serverList)) {
-                projectStatistic.getServerList().add(null);
+                projectInfomation.getServerList().add(null);
                 continue;
             }
             for (Server server : serverList) {
-                ServerStatistic serverStatistic = new ServerStatistic();
-                serverStatistic.setServer(server.getServerName());
-                projectStatistic.getServerList().add(serverStatistic);
+                ServerInformation serverInformation = new ServerInformation();
+                serverInformation.setServer(server.getServerName());
+                projectInfomation.getServerList().add(serverInformation);
             }
-            response.getProjects().add(projectStatistic);
+            response.getProjects().add(projectInfomation);
         }
         return response;
     }
