@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.dao.LogFileDao;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
@@ -26,12 +28,13 @@ public class LogFileService {
     }
 
     @Transactional
-    public void saveList(List<LogFile> logFiles) {
+    public void saveMap(Map<String, LogFile> logFiles) {
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }
-        for (LogFile logFile : logFiles) {
-            logFileDao.save(logFile);
+
+        for (Entry<String, LogFile> entry : logFiles.entrySet()) {
+            logFileDao.save(entry.getValue());
         }
     }
 
@@ -77,20 +80,24 @@ public class LogFileService {
         }
 
         List<String> pathFilters = new ArrayList<>();
-        pathFilters.add("[\\S\\|\\s]*" + logFileWrapper.getProject().getName() + "[\\S\\|\\s]*");
-        pathFilters.add("[\\S\\|\\s]*" + logFileWrapper.getServer().getServerName() + "[\\S\\|\\s]*");
+        pathFilters.add(dataMatchAll(logFileWrapper.getProject().getName()));
+        pathFilters.add(dataMatchAll(logFileWrapper.getServer().getServerName()));
         filterMap.put("pathFilters", pathFilters);
 
         List<String> nameFilters = new ArrayList<>();
-        nameFilters.add("[\\S\\|\\s]*.log[\\S\\|\\s]*");
-        nameFilters.add("[\\S\\|\\s]*" + dateFormat(logFileWrapper.getDate()) + "[\\S\\|\\s]*");
+        nameFilters.add(dataMatchAll(".log"));
+        nameFilters.add(dataMatchAll(dateFormat(logFileWrapper.getDate())));
 
         filterMap.put("nameFilters", nameFilters);
         return filterMap;
     }
 
+    private String dataMatchAll(String data) {
+        return "[\\S\\|\\s]*" + data + "[\\S\\|\\s]*";
+    }
+
     private String dateFormat(String date) {
-        if (null == date) {
+        if (StringUtils.hasText(date)) {
             return "";
         }
         StringBuilder dateString = new StringBuilder();

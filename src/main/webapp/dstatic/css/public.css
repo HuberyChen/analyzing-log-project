@@ -1,0 +1,9 @@
+.loadingDiv{
+	background:url(../images/loading.gif) no-repeat;
+	padding-top:40px;
+	display:inline-block;
+	width:35px;
+}
+.loadingDiv.displayNone{
+	display:none;
+}

@@ -1,7 +1,6 @@
 package com.quidsi.log.analyzing.service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +24,11 @@ public class LogFilesLoader {
 
     private LogFileWrapper logFileWrapper;
 
-    public LogFileWrapper logLoader(LogFileWrapper initializeLogFileWrappers) {
+    public void initializeData(LogFileWrapper initializeLogFileWrapper) {
+        logFileWrapper = initializeLogFileWrapper;
+    }
 
-        logFileWrapper = initializeLogFileWrappers;
+    public LogFileWrapper logLoader() {
 
         loadAllFile();
         loadActionLogFilesExisted();
@@ -37,24 +38,27 @@ public class LogFilesLoader {
 
     private void loadActionLogFilesExisted() {
         List<LogFile> logFilesIsExisted = logFileService.getLogFilesByLogFileWrapper(logFileWrapper);
-        logFileWrapper.addLogFilesHistories(logFilesIsExisted);
+        if (CollectionUtils.isEmpty(logFilesIsExisted)) {
+            for (LogFile logFile : logFilesIsExisted) {
+                logFileWrapper.getLogFilesHistories().put(logFile.getLogName(), logFile);
+            }
+        }
     }
 
     private void loadAllFile() {
         Map<String, List<String>> filterMap = logFileService.initializeFilters(logFileWrapper);
         List<String> logPaths = ScanUtils.scan(logFileWrapper.getPath(), filterMap.get("pathFilters"), filterMap.get("nameFilters"));
-        logFileWrapper.addAllLogFiles(generateLogFiles(logPaths, logFileWrapper));
+        generateLogFiles(logPaths);
     }
 
-    private List<LogFile> generateLogFiles(List<String> logPaths, LogFileWrapper logFileWrapper) {
-        List<LogFile> logFiles = new ArrayList<>();
+    private void generateLogFiles(List<String> logPaths) {
         if (CollectionUtils.isEmpty(logPaths)) {
-            return null;
+            return;
         }
         for (String logPath : logPaths) {
-            logFiles.add(generateLogFile(logPath, logFileWrapper.getServer()));
+            LogFile logFile = generateLogFile(logPath, logFileWrapper.getServer());
+            logFileWrapper.getAllLogFiles().put(logFile.getLogName(), logFile);
         }
-        return logFiles;
     }
 
     private LogFile generateLogFile(String logPath, Server server) {

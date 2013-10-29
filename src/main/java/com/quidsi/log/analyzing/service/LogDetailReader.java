@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -24,12 +25,18 @@ public class LogDetailReader {
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
 
-    public void scanActionLogDetail(LogFileWrapper logFileWrapper) {
-        List<LogFile> logFiles = logFileService.getAnalyzedLogFilesByLogFileWrapper(logFileWrapper);
+    public void saveActionLogDetail(LogFileWrapper logFileWrapper) {
+        Map<String, LogFile> logFiles = logFileWrapper.getLogFilesHistories();
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }
-        for (LogFile logFile : logFiles) {
+        for (Entry<String, LogFile> entry : logFiles.entrySet()) {
+            LogFile logFile = entry.getValue();
+
+            if (logFile.getIsAnalyzed().equals(LogFile.IsAnalyzed.Y)) {
+                continue;
+            }
+
             List<ActionLogDetail> records = new ArrayList<>();
             File file = new File(logFile.getAbsolutePath());
             Map<Integer, String[]> messageMap = FileFactory.logRead(file);

@@ -1,6 +1,8 @@
 package com.quidsi.log.analyzing.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -12,43 +14,56 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.quidsi.core.platform.web.rest.RESTController;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
+import com.quidsi.log.analyzing.domain.Project;
+import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.request.ActionLogAnalyzingRequest;
-import com.quidsi.log.analyzing.service.DataConver;
-import com.quidsi.log.analyzing.service.LogDetailReader;
+import com.quidsi.log.analyzing.service.DataValidate;
 import com.quidsi.log.analyzing.service.LogFileOperation;
+import com.quidsi.log.analyzing.service.ProjectService;
+import com.quidsi.log.analyzing.service.ServerService;
 
 @Controller
 public class ActionLogAnalyzingController extends RESTController {
 
-    private LogDetailReader logDetailReader;
     private LogFileOperation logFileOperation;
-    private DataConver dataConver;
+    private DataValidate dataValidate;
     private String path;
+    private ProjectService projectService;
+    private ServerService serverService;
 
     @RequestMapping(value = "/project/instance/log/action", method = RequestMethod.POST)
     @ResponseBody
-    public void actionLogAnalyzing(@Valid @RequestBody ActionLogAnalyzingRequest request) {
+    public String actionLogAnalyzing(@Valid @RequestBody ActionLogAnalyzingRequest request) {
 
-        List<LogFileWrapper> logFileWrappers = dataConver.initializeLogFileWrappers(request, path);
+        List<LogFileWrapper> logFileWrappers = dataValidate.initializeLogFileWrappers(request, path);
 
         if (CollectionUtils.isEmpty(logFileWrappers)) {
-            return;
+            return "failure";
         }
 
         for (LogFileWrapper logFileWrapper : logFileWrappers) {
-            logFileOperation.saveLogFilesNotExisted(logFileWrapper);
-            logFileOperation.decompression(logFileWrapper);
-            logDetailReader.scanActionLogDetail(logFileWrapper);
+            logFileOperation.initializeData(logFileWrapper);
+            logFileOperation.saveLogFilesNotExisted();
+            logFileOperation.decompression();
+            logFileOperation.saveActionLogDetail();
         }
+        return "success";
     }
 
-    @Inject
-    public void setLogDetailReader(LogDetailReader logDetailReader) {
-        this.logDetailReader = logDetailReader;
+    @RequestMapping(value = "/project/instance", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, List<Server>> findServerByProject(@Valid @RequestParam String projectName) {
+        Project project = projectService.getProjectByName(projectName);
+        List<Server> servers = serverService.getServersByProjectId(project.getId());
+
+        Map<String, List<Server>> map = new HashMap<>();
+        map.put("servers", servers);
+        return map;
     }
 
     @Inject
@@ -57,13 +72,23 @@ public class ActionLogAnalyzingController extends RESTController {
     }
 
     @Inject
-    public void setDataConver(DataConver dataConver) {
-        this.dataConver = dataConver;
+    public void setDataConver(DataValidate dataValidate) {
+        this.dataValidate = dataValidate;
     }
 
     @Autowired
     public void setPath(@Value("${portal.path}") String path) {
         this.path = path;
+    }
+
+    @Inject
+    public void setProjectService(ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
+    @Inject
+    public void setServerService(ServerService serverService) {
+        this.serverService = serverService;
     }
 
 }

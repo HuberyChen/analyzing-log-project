@@ -1,7 +1,8 @@
 package com.quidsi.log.analyzing.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.util.CollectionUtils;
 
@@ -15,9 +16,9 @@ public class LogFileWrapper {
 
     private String path;
 
-    private List<LogFile> allLogFiles = new ArrayList<>();
+    private Map<String, LogFile> allLogFiles = new HashMap<>();
 
-    private List<LogFile> logFilesHistories = new ArrayList<>();
+    private Map<String, LogFile> logFilesHistories = new HashMap<>();
 
     public LogFileWrapper(Project project, Server server, String date, String path) {
         this.project = project;
@@ -26,66 +27,13 @@ public class LogFileWrapper {
         this.path = path;
     }
 
-    public void addAllLogFiles(List<LogFile> logFiles) {
+    public void addLogFilesHistories(Map<String, LogFile> logFiles) {
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }
-        for (LogFile logFile : logFiles) {
-            allLogFiles.add(logFile);
+        for (Entry<String, LogFile> entry : logFiles.entrySet()) {
+            logFilesHistories.put(entry.getKey(), entry.getValue());
         }
-    }
-
-    public void addLogFilesHistories(List<LogFile> logFiles) {
-        if (CollectionUtils.isEmpty(logFiles)) {
-            return;
-        }
-        for (LogFile logFile : logFiles) {
-            logFilesHistories.add(logFile);
-        }
-    }
-
-    public List<LogFile> getLogFileNotExisted() {
-        List<LogFile> logFilesNotExisted = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allLogFiles)) {
-            return null;
-        }
-
-        for (LogFile logFile : allLogFiles) {
-            if (judgeListIsContainLogFile(logFile, logFilesHistories)) {
-                continue;
-            }
-            logFilesNotExisted.add(logFile);
-        }
-        return logFilesNotExisted;
-    }
-
-    private boolean judgeListIsContainLogFile(LogFile logFile, List<LogFile> logFiles) {
-        boolean result = true;
-
-        if (CollectionUtils.isEmpty(logFiles)) {
-            result = false;
-        }
-
-        for (LogFile contrastLogFile : logFiles) {
-            if (judgeLogFileIsEqual(logFile, contrastLogFile)) {
-                continue;
-            }
-            result = false;
-        }
-        return result;
-    }
-
-    private boolean judgeLogFileIsEqual(LogFile logFile, LogFile contrastLogFile) {
-        if (!logFile.getLogName().equals(contrastLogFile.getLogName())) {
-            return false;
-        }
-        if (logFile.getProjectId() != contrastLogFile.getProjectId()) {
-            return false;
-        }
-        if (logFile.getServerId() != contrastLogFile.getServerId()) {
-            return false;
-        }
-        return true;
     }
 
     public Project getProject() {
@@ -112,20 +60,20 @@ public class LogFileWrapper {
         this.path = path;
     }
 
-    public List<LogFile> getAllLogFiles() {
-        return allLogFiles;
-    }
-
-    public List<LogFile> getLogFilesHistories() {
-        return logFilesHistories;
-    }
-
     public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public Map<String, LogFile> getAllLogFiles() {
+        return allLogFiles;
+    }
+
+    public Map<String, LogFile> getLogFilesHistories() {
+        return logFilesHistories;
     }
 
 }
