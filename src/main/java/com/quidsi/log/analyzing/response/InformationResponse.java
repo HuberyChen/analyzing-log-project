@@ -13,11 +13,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InformationResponse {
 
-    @XmlElementWrapper(name = "projects")
-    @XmlElement(name = "project")
-    private List<ProjectStatistic> projects = new ArrayList<>();
+	@XmlElementWrapper(name = "projects")
+	@XmlElement(name = "project")
+	private List<ProjectInfomation> projects = new ArrayList<>();
 
-    public List<ProjectStatistic> getProjects() {
-        return projects;
-    }
+	public List<ProjectInfomation> getProjects() {
+		return projects;
+	}
+
 }
