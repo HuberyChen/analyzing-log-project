@@ -12,37 +12,45 @@ $(document).ready(function() {
 });
 </script>
 <body>
-	<form id="analyzingLogForm" action="<@url value='/project/instance/log/action'/>" method="post">
-		<table>
-			<tr>
-				<td>Project:</td>
-				<td><select id="projectList" name="project">
-						<option>All</option>
-						<#if projects??>
-							<#list projects as project>
-								<option value=${project.name} onclick="findServerByProject(this)">${project.name}</option>
-	                    	</#list>
-                    	</#if>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Instance:</td>
-				<td><select id="serverList" name="instance">
-						<option id="default">All</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Date:</td>
-				<td><input class="date left hasDatePicker"readonly="readonly" type="date" id="date" name="date" /></td>
-			</tr>
-			<tr>
-				<td><input id="button" type="button" onclick="analyzingLog()" value="confirm"/></td>
-				<td><span class="loadingDiv displayNone" id="loadingLogo"></span></td>
-			</tr>
-		</table>
-	</form>
+<div class="main">
+	<div class="container">
+		<form id="analyzingLogForm" action="<@url value='/project/instance/log/action'/>" method="post">
+			<table class="anlyzinglog-tb">
+				<tr>
+					<td>Project:</td>
+					<td><select id="projectList" name="project">
+							<option>All</option>
+							<#if projects??>
+								<#list projects as project>
+									<option value=${project.name} onclick="findServerByProject(this)">${project.name}</option>
+		                    	</#list>
+	                    	</#if>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Instance:</td>
+					<td><select id="serverList" name="instance">
+							<option id="default">All</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Date:</td>
+					<td><input class="date left hasDatePicker"readonly="readonly" type="date" id="date" name="date" /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><p class="clearfix">
+						<input id="button" type="button" onclick="analyzingLog()" value="confirm"/>
+						<span class="loadingDiv displayNone" id="loadingLogo"></span>
+						</p>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
 </body>
 	<script type="text/javascript">
 	
@@ -57,7 +65,7 @@ $(document).ready(function() {
 				var servers = result.servers;
 				if (null != servers) {
 					for(var i=0;i<servers.length;i++){
-						var inputValue = "<option value=\""+servers[i].serverName+"\">\""+servers[i].serverName+"\"</option>";
+						var inputValue = "<option value=\""+servers[i].serverName+"\">"+servers[i].serverName+"</option>";
 						$(inputValue).insertAfter($("#serverList").children(":last"));
 					}
 				}
@@ -68,14 +76,13 @@ $(document).ready(function() {
 	function analyzingLog(){
 		$("#loadingLogo").css("display","inline-block");
 		$("#button").attr('disabled',true);
+		$("#button").css({'background':'gray','border-color':'gray'});
 	    $("#analyzingLogForm").ajaxSubmit({callback:function(result){
-	    	if(result == 'success'){
+	    	if(result.status == 'success'){
 	    		alert("success");
 	    	} else {
 	    		alert("failure");
 	    	}
-	    	$("#loadingLogo").css("display","none");
-			$("#button").attr('disabled',false);
         	window.location.reload();
         },validate:false});
 	}

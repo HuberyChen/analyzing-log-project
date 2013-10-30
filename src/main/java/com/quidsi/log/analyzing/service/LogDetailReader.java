@@ -10,13 +10,14 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.quidsi.core.util.Convert;
 import com.quidsi.core.util.DateUtils;
+import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.LogFile;
-import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.utils.FileFactory;
 
 @Component
@@ -25,13 +26,12 @@ public class LogDetailReader {
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
 
-    public void saveActionLogDetail(LogFileWrapper logFileWrapper) {
-        Map<String, LogFile> logFiles = logFileWrapper.getLogFilesHistories();
+    @Transactional
+    public void saveActionLogDetail(List<LogFile> logFiles) {
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }
-        for (Entry<String, LogFile> entry : logFiles.entrySet()) {
-            LogFile logFile = entry.getValue();
+        for (LogFile logFile : logFiles) {
 
             if (logFile.getIsAnalyzed().equals(LogFile.IsAnalyzed.Y)) {
                 continue;
@@ -40,8 +40,13 @@ public class LogDetailReader {
             List<ActionLogDetail> records = new ArrayList<>();
             File file = new File(logFile.getAbsolutePath());
             Map<Integer, String[]> messageMap = FileFactory.logRead(file);
-            for (int i = 0; i < messageMap.size(); i++) {
-                records.add(dataConverToRecord(messageMap.get(i), logFile.getId()));
+
+            if (CollectionUtils.isEmpty(messageMap)) {
+                continue;
+            }
+
+            for (Entry<Integer, String[]> entry : messageMap.entrySet()) {
+                records.add(dataConverToRecord(entry.getValue(), logFile.getId()));
             }
             if (CollectionUtils.isEmpty(records)) {
                 continue;
@@ -56,21 +61,27 @@ public class LogDetailReader {
         ActionLogDetail record = new ActionLogDetail();
         record.setLogId(logId);
         record.setRecordTime(dataConverToDate(messages[0]));
-        record.setStatus(messages[1]);
-        record.setInterfaceName(messages[3]);
-        record.setElapsedTime(Convert.toInt(messages[4].trim(), 0));
-        record.setRequestMethod(messages[7]);
-        record.setErrorCode(messages[8]);
-        record.setExceptionMsg(messages[9]);
-        record.setLogAddress(messages[11]);
+        record.setStatus(trim(messages[1]));
+        record.setInterfaceName(trim(messages[3]));
+        record.setElapsedTime(Convert.toInt(trim(messages[4]), 0));
+        record.setRequestMethod(trim(messages[7]));
+        record.setErrorCode(trim(messages[8]));
+        record.setExceptionMsg(trim(messages[9]));
+        record.setLogAddress(trim(messages[11]));
         return record;
+    }
+
+    private String trim(String str) {
+        if (StringUtils.hasText(str)) {
+            return str.trim();
+        }
+        return str;
     }
 
     private Date dataConverToDate(String dateMessage) {
         final int size = 6;
         String[] date = dateMessage.split("-");
-        int[] dateTime;
-        dateTime = new int[size];
+        int[] dateTime = new int[size];
         for (int i = 0; i < size; i++) {
             dateTime[i] = Integer.parseInt(date[i]);
         }

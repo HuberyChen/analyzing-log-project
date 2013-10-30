@@ -18,12 +18,12 @@ public class ProjectServerService {
 
     private ServerService serverService;
 
-    public void scanNewProjectAndServer(String root) {
-        scanNewProject(root);
-        scanNewServer(root);
+    public void scanProjectAndServer(String root) {
+        scanProject(root);
+        scanServer(root);
     }
 
-    public void scanNewProject(String root) {
+    public void scanProject(String root) {
         List<String> projectNameList = ScanUtils.scanDirectoryFileName(root);
         if (CollectionUtils.isEmpty(projectNameList)) {
             return;
@@ -35,7 +35,7 @@ public class ProjectServerService {
         }
     }
 
-    public void scanNewServer(String root) {
+    public void scanServer(String root) {
         List<String> pathList = ScanUtils.scanDirectoryFilePath(root);
         if (CollectionUtils.isEmpty(pathList)) {
             return;

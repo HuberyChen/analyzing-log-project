@@ -1,7 +1,9 @@
 package com.quidsi.log.analyzing.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,100 +19,93 @@ import com.quidsi.log.analyzing.utils.FileFactory;
 @Component
 public class LogFileOperation {
 
-	private LogFileService logFileService;
+    private LogFileService logFileService;
 
-	private LogFilesLoader logFilesLoader;
+    private LogFilesLoader logFilesLoader;
 
-	private LogDetailReader logDetailReader;
+    private LogDetailReader logDetailReader;
 
-	private LogFileWrapper logFileWrapper;
+    public LogFileWrapper saveLogFilesNotExisted(LogFileWrapper logFileWrapper) {
+        List<LogFile> logFilesNotExisted = getLogFileNotExisted(logFilesLoader.loaderAllLog(logFileWrapper));
+        if (CollectionUtils.isEmpty(logFilesNotExisted)) {
+            return logFileWrapper;
+        }
+        logFileService.saveList(logFilesNotExisted);
+        logFileWrapper.getLogFilesHistories().addAll(logFilesNotExisted);
+        return logFileWrapper;
+    }
 
-	public void initializeData(LogFileWrapper initializeLogFileWrapper) {
-		logFileWrapper = initializeLogFileWrapper;
-	}
+    public LogFileWrapper decompression(LogFileWrapper logFileWrapper) {
+        List<LogFile> uncompressionActionLogs = logFileWrapper.getLogFilesHistories();
 
-	public void saveActionLogDetail() {
-		logDetailReader.saveActionLogDetail(logFileWrapper);
-	}
+        if (CollectionUtils.isEmpty(uncompressionActionLogs)) {
+            return logFileWrapper;
+        }
+        for (LogFile logFile : uncompressionActionLogs) {
+            if (logFile.getIsDecomposed().equals(LogFile.IsDecomposed.N) && logFile.getLogType().equals(ServiceConstant.LOG_TYPE_ACTION)) {
+                String absolutePath = FileFactory.unGz(new File(logFile.getAbsolutePath()));
+                logFile.setIsDecomposed(LogFile.IsDecomposed.Y);
+                logFile.setAbsolutePath(absolutePath);
+                logFileService.update(logFile);
+            }
+        }
+        return logFileWrapper;
 
-	public void saveLogFilesNotExisted() {
-		logFilesLoader.initializeData(logFileWrapper);
-		Map<String, LogFile> logFilesNotExisted = getLogFileNotExisted(logFilesLoader
-				.logLoader());
-		if (CollectionUtils.isEmpty(logFilesNotExisted)) {
-			return;
-		}
-		logFileService.saveMap(logFilesNotExisted);
-		logFileWrapper.addLogFilesHistories(logFilesNotExisted);
-	}
+    }
 
-	public void decompression() {
-		Map<String, LogFile> uncompressionActionLogs = logFileWrapper
-				.getLogFilesHistories();
+    public LogFileWrapper saveActionLogDetail(LogFileWrapper logFileWrapper) {
+        List<LogFile> logFiles = logFileWrapper.getLogFilesHistories();
+        if (CollectionUtils.isEmpty(logFiles)) {
+            return logFileWrapper;
+        }
+        logDetailReader.saveActionLogDetail(logFiles);
+        return logFileWrapper;
+    }
 
-		if (CollectionUtils.isEmpty(uncompressionActionLogs)) {
-			return;
-		}
-		for (Entry<String, LogFile> entry : uncompressionActionLogs.entrySet()) {
-			LogFile actionLog = entry.getValue();
-			if (actionLog.getIsDecomposed().equals(LogFile.IsDecomposed.Y)) {
-				continue;
-			}
-			String absolutePath = FileFactory.unGz(new File(actionLog
-					.getAbsolutePath()));
-			actionLog.setIsDecomposed(LogFile.IsDecomposed.Y);
-			actionLog.setAbsolutePath(absolutePath);
-			logFileService.update(actionLog);
-		}
+    private List<LogFile> getLogFileNotExisted(LogFileWrapper logFileWrapper) {
+        List<LogFile> logFilesNotExisted = new ArrayList<>();
+        Map<String, LogFile> allLogFiles = listConverToMap(logFileWrapper.getAllLogFiles());
 
-	}
+        if (CollectionUtils.isEmpty(allLogFiles)) {
+            return null;
+        }
 
-	private Map<String, LogFile> getLogFileNotExisted(
-			LogFileWrapper logFileWrapper) {
-		Map<String, LogFile> logFilesNotExisted = new HashMap<>();
-		Map<String, LogFile> allLogFiles = logFileWrapper.getAllLogFiles();
+        for (Entry<String, LogFile> entry : allLogFiles.entrySet()) {
+            LogFile logFile = entry.getValue();
 
-		if (CollectionUtils.isEmpty(allLogFiles)) {
-			return null;
-		}
+            Map<String, LogFile> logFilesHistories = listConverToMap(logFileWrapper.getLogFilesHistories());
+            if (!CollectionUtils.isEmpty(logFilesHistories) && logFilesHistories.containsKey(entry.getKey())) {
+                continue;
+            }
+            logFilesNotExisted.add(logFile);
+        }
+        return logFilesNotExisted;
+    }
 
-		for (Entry<String, LogFile> entry : allLogFiles.entrySet()) {
-			LogFile logFile = entry.getValue();
+    private Map<String, LogFile> listConverToMap(List<LogFile> list) {
+        Map<String, LogFile> map = new HashMap<>();
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+        for (LogFile logFile : list) {
+            map.put(logFile.getLogName(), logFile);
+        }
+        return map;
+    }
 
-			Map<String, LogFile> logFilesHistories = logFileWrapper
-					.getLogFilesHistories();
-			if (logFilesHistories.containsKey(entry.getKey())) {
-				continue;
-			}
-			LogFile logFileHistory = logFilesNotExisted.get(entry.getKey());
-			if (null == logFileHistory) {
-				logFilesNotExisted.put(entry.getKey(), logFile);
-				continue;
-			}
-			if (!logFileHistory.getAbsolutePath().equals(
-					logFile.getAbsolutePath())
-					&& logFile.getAbsolutePath().contains(
-							ServiceConstant.DECOMPRESSION)) {
-				logFileHistory.setAbsolutePath(logFile.getAbsolutePath());
-				logFileHistory.setIsDecomposed(LogFile.IsDecomposed.Y);
-			}
-		}
-		return logFilesNotExisted;
-	}
+    @Inject
+    public void setLogFileService(LogFileService logFileService) {
+        this.logFileService = logFileService;
+    }
 
-	@Inject
-	public void setLogFileService(LogFileService logFileService) {
-		this.logFileService = logFileService;
-	}
+    @Inject
+    public void setLogFilesLoader(LogFilesLoader logFilesLoader) {
+        this.logFilesLoader = logFilesLoader;
+    }
 
-	@Inject
-	public void setLogFilesLoader(LogFilesLoader logFilesLoader) {
-		this.logFilesLoader = logFilesLoader;
-	}
-
-	@Inject
-	public void setLogDetailReader(LogDetailReader logDetailReader) {
-		this.logDetailReader = logDetailReader;
-	}
+    @Inject
+    public void setLogDetailReader(LogDetailReader logDetailReader) {
+        this.logDetailReader = logDetailReader;
+    }
 
 }

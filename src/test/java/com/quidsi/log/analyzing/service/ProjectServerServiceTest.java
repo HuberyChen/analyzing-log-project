@@ -11,9 +11,9 @@ public class ProjectServerServiceTest extends SpringTest {
     private ProjectServerService projectServerService;
 
     @Test
-    public void newProjectTest() {
+    public void projectTest() {
         String root = "\\\\sharedoc\\文件交换区\\Java-Team\\prod log";
-        projectServerService.scanNewProjectAndServer(root);
+        projectServerService.scanProjectAndServer(root);
     }
 
     @Inject

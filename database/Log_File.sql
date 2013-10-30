@@ -4,7 +4,7 @@ CREATE TABLE Log_File (
 	ProjectId INT NOT NULL ,
 	ServerId INT NOT NULL ,
 	LogType VARCHAR(10) NULL ,
-	AbsolutePath VARCHAR(200) NULL ,
+	AbsolutePath NVARCHAR(200) NULL ,
 	IsDecomposed CHAR(1) NOT NULL ,
 	IsAnalyzed CHAR(1) NOT NULL ,
 )

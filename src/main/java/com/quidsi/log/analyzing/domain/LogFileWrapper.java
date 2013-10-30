@@ -1,10 +1,7 @@
 package com.quidsi.log.analyzing.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.springframework.util.CollectionUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogFileWrapper {
 
@@ -16,24 +13,15 @@ public class LogFileWrapper {
 
     private String path;
 
-    private Map<String, LogFile> allLogFiles = new HashMap<>();
+    private List<LogFile> allLogFiles = new ArrayList<>();
 
-    private Map<String, LogFile> logFilesHistories = new HashMap<>();
+    private List<LogFile> logFilesHistories = new ArrayList<>();
 
     public LogFileWrapper(Project project, Server server, String date, String path) {
         this.project = project;
         this.server = server;
         this.date = date;
         this.path = path;
-    }
-
-    public void addLogFilesHistories(Map<String, LogFile> logFiles) {
-        if (CollectionUtils.isEmpty(logFiles)) {
-            return;
-        }
-        for (Entry<String, LogFile> entry : logFiles.entrySet()) {
-            logFilesHistories.put(entry.getKey(), entry.getValue());
-        }
     }
 
     public Project getProject() {
@@ -68,11 +56,11 @@ public class LogFileWrapper {
         this.date = date;
     }
 
-    public Map<String, LogFile> getAllLogFiles() {
+    public List<LogFile> getAllLogFiles() {
         return allLogFiles;
     }
 
-    public Map<String, LogFile> getLogFilesHistories() {
+    public List<LogFile> getLogFilesHistories() {
         return logFilesHistories;
     }
 

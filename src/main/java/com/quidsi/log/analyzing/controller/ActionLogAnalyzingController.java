@@ -38,21 +38,23 @@ public class ActionLogAnalyzingController extends RESTController {
 
     @RequestMapping(value = "/project/instance/log/action", method = RequestMethod.POST)
     @ResponseBody
-    public String actionLogAnalyzing(@Valid @RequestBody ActionLogAnalyzingRequest request) {
+    public Map<String, Object> actionLogAnalyzing(@Valid @RequestBody ActionLogAnalyzingRequest request) {
 
+        Map<String, Object> map = new HashMap<>();
         List<LogFileWrapper> logFileWrappers = dataValidate.initializeLogFileWrappers(request, path);
 
         if (CollectionUtils.isEmpty(logFileWrappers)) {
-            return "failure";
+            map.put("status", "failure");
+            return map;
         }
 
         for (LogFileWrapper logFileWrapper : logFileWrappers) {
-            logFileOperation.initializeData(logFileWrapper);
-            logFileOperation.saveLogFilesNotExisted();
-            logFileOperation.decompression();
-            logFileOperation.saveActionLogDetail();
+            logFileOperation.saveLogFilesNotExisted(logFileWrapper);
+            logFileOperation.decompression(logFileWrapper);
+            logFileOperation.saveActionLogDetail(logFileWrapper);
         }
-        return "success";
+        map.put("status", "success");
+        return map;
     }
 
     @RequestMapping(value = "/project/instance", method = RequestMethod.POST)

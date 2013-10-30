@@ -14,6 +14,8 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.quidsi.log.analyzing.service.ServiceConstant;
+
 public final class FileFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(FileFactory.class);
@@ -53,9 +55,9 @@ public final class FileFactory {
             int len;
 
             srcGzPath = srcGzPath.replace(dstDirectoryPath.toString(), "");
-            FileUtils.folderIsExists(dstDirectoryPath.append("//decompression").toString());
+            FileUtils.folderIsExists(dstDirectoryPath.append("//" + ServiceConstant.DECOMPRESSION).toString());
             dstDirectoryPath.append("//");
-            File outFile = new File(dstDirectoryPath.append(srcGzPath.replace(".gz", "")).toString());
+            File outFile = new File(dstDirectoryPath.append(srcGzPath.replace(ServiceConstant.GZ_SUFFIX, "")).toString());
             if (!outFile.exists()) {
                 try (OutputStream out = new FileOutputStream(outFile)) {
                     while ((len = in.read(buf)) > 0) {
