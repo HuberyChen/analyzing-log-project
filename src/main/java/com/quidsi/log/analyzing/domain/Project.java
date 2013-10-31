@@ -11,18 +11,10 @@ public class Project {
     @Id
     @GeneratedValue
     @Column(name = "Id")
-    private int Id;
+    private int id;
 
     @Column(name = "Name")
     private String name;
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
-    }
 
     public String getName() {
         return name;
@@ -30,5 +22,13 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

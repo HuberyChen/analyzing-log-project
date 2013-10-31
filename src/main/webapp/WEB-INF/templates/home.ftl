@@ -12,6 +12,8 @@ $(document).ready(function() {
 });
 </script>
 <body>
+
+<h1>Analyzing Log</span></h1>
 <div class="main">
 	<div class="container">
 		<form id="analyzingLogForm" action="<@url value='/project/instance/log/action'/>" method="post">
@@ -45,6 +47,7 @@ $(document).ready(function() {
 						<input id="button" type="button" onclick="analyzingLog()" value="confirm"/>
 						<span class="loadingDiv displayNone" id="loadingLogo"></span>
 						</p>
+						<input class="right" type="button" value="Logout" onclick=""window.location.href="<@url value='/signOut'/>"" />
 					</td>
 				</tr>
 			</table>

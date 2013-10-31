@@ -112,7 +112,7 @@ public class LogFilesLoader {
     private LogFile generateLogFileByLogName(String logName) {
         LogFile logFile = new LogFile();
         if (logName.endsWith(ServiceConstant.GZ_SUFFIX)) {
-            logName = logName.replace(ServiceConstant.GZ_SUFFIX, "");
+            logName.replace(ServiceConstant.GZ_SUFFIX, "");
         }
         if (logName.contains(ServiceConstant.LOG_TYPE_ACTION)) {
             logFile.setLogType(ServiceConstant.LOG_TYPE_ACTION);

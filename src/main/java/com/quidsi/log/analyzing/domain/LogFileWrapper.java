@@ -13,9 +13,9 @@ public class LogFileWrapper {
 
     private String path;
 
-    private List<LogFile> allLogFiles = new ArrayList<>();
+    private final List<LogFile> allLogFiles = new ArrayList<>();
 
-    private List<LogFile> logFilesHistories = new ArrayList<>();
+    private final List<LogFile> logFilesHistories = new ArrayList<>();
 
     public LogFileWrapper(Project project, Server server, String date, String path) {
         this.project = project;

@@ -1,0 +1,1 @@
+The application has encounter an error, please return to the <a href="<@url value='/home'/>">home page</a>. 

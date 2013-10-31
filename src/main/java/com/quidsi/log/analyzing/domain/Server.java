@@ -11,21 +11,13 @@ public class Server {
     @Id
     @GeneratedValue
     @Column(name = "Id")
-    private int Id;
+    private int id;
 
     @Column(name = "ServerName")
     private String serverName;
 
     @Column(name = "ProjectId")
     private int projectId;
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
-    }
 
     public String getServerName() {
         return serverName;
@@ -41,5 +33,13 @@ public class Server {
 
     public void setProjectId(int projectId) {
         this.projectId = projectId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

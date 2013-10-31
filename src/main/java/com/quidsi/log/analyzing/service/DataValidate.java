@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
-import com.quidsi.log.analyzing.request.ActionLogAnalyzingRequest;
+import com.quidsi.log.analyzing.web.request.ActionLogAnalyzingRequest;
 
 @Service
 public class DataValidate {
@@ -46,7 +46,7 @@ public class DataValidate {
         }
         Server server = serverService.getServerByProjectIdAndServerName(project.getId(), serverName);
         if (null == server) {
-            throw new IllegalStateException(String.format("%d does not have instance", project.getName()));
+            throw new IllegalStateException(String.format("%s does not have instance", project.getName()));
         }
         logFileWrappers.add(new LogFileWrapper(project, server, date, path));
         return logFileWrappers;
@@ -61,7 +61,7 @@ public class DataValidate {
         for (Project project : projects) {
             List<Server> servers = serverService.getServersByProjectId(project.getId());
             if (CollectionUtils.isEmpty(servers)) {
-                logger.error("%d does not have instance", project.getName());
+                logger.error("%s does not have instance", project.getName());
                 continue;
             }
             for (Server server : servers) {
@@ -82,7 +82,7 @@ public class DataValidate {
         }
         List<Server> servers = serverService.getServersByProjectId(project.getId());
         if (CollectionUtils.isEmpty(servers)) {
-            throw new IllegalStateException(String.format("%d does not have instance", projectName));
+            throw new IllegalStateException(String.format("%s does not have instance", projectName));
         }
         for (Server server : servers) {
             logFileWrappers.add(new LogFileWrapper(project, server, date, path));

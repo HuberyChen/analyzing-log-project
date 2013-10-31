@@ -10,104 +10,104 @@ import javax.persistence.Id;
 @Entity(name = "Log_File")
 public class LogFile {
 
-	@Id
-	@GeneratedValue
-	@Column(name = "Id")
-	private int Id;
+    @Id
+    @GeneratedValue
+    @Column(name = "Id")
+    private int id;
 
-	@Column(name = "LogName")
-	private String logName;
+    @Column(name = "LogName")
+    private String logName;
 
-	@Column(name = "ProjectId")
-	private int projectId;
+    @Column(name = "ProjectId")
+    private int projectId;
 
-	@Column(name = "ServerId")
-	private int serverId;
+    @Column(name = "ServerId")
+    private int serverId;
 
-	@Column(name = "LogType")
-	private String logType;
+    @Column(name = "LogType")
+    private String logType;
 
-	@Column(name = "AbsolutePath")
-	private String absolutePath;
+    @Column(name = "AbsolutePath")
+    private String absolutePath;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "IsDecomposed")
-	private IsDecomposed isDecomposed;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "IsDecomposed")
+    private IsDecomposed isDecomposed;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "IsAnalyzed")
-	private IsAnalyzed isAnalyzed;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "IsAnalyzed")
+    private IsAnalyzed isAnalyzed;
 
-	public enum IsDecomposed {
-		Y, N
-	}
+    public enum IsDecomposed {
+        Y, N
+    }
 
-	public enum IsAnalyzed {
-		Y, N
-	}
+    public enum IsAnalyzed {
+        Y, N
+    }
 
-	public int getId() {
-		return Id;
-	}
+    public String getLogName() {
+        return logName;
+    }
 
-	public void setId(int id) {
-		Id = id;
-	}
+    public void setLogName(String logName) {
+        this.logName = logName;
+    }
 
-	public String getLogName() {
-		return logName;
-	}
+    public int getProjectId() {
+        return projectId;
+    }
 
-	public void setLogName(String logName) {
-		this.logName = logName;
-	}
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
 
-	public int getProjectId() {
-		return projectId;
-	}
+    public int getServerId() {
+        return serverId;
+    }
 
-	public void setProjectId(int projectId) {
-		this.projectId = projectId;
-	}
+    public void setServerId(int serverId) {
+        this.serverId = serverId;
+    }
 
-	public int getServerId() {
-		return serverId;
-	}
+    public String getLogType() {
+        return logType;
+    }
 
-	public void setServerId(int serverId) {
-		this.serverId = serverId;
-	}
+    public void setLogType(String logType) {
+        this.logType = logType;
+    }
 
-	public String getLogType() {
-		return logType;
-	}
+    public String getAbsolutePath() {
+        return absolutePath;
+    }
 
-	public void setLogType(String logType) {
-		this.logType = logType;
-	}
+    public void setAbsolutePath(String absolutePath) {
+        this.absolutePath = absolutePath;
+    }
 
-	public String getAbsolutePath() {
-		return absolutePath;
-	}
+    public IsDecomposed getIsDecomposed() {
+        return isDecomposed;
+    }
 
-	public void setAbsolutePath(String absolutePath) {
-		this.absolutePath = absolutePath;
-	}
+    public void setIsDecomposed(IsDecomposed isDecomposed) {
+        this.isDecomposed = isDecomposed;
+    }
 
-	public IsDecomposed getIsDecomposed() {
-		return isDecomposed;
-	}
+    public IsAnalyzed getIsAnalyzed() {
+        return isAnalyzed;
+    }
 
-	public void setIsDecomposed(IsDecomposed isDecomposed) {
-		this.isDecomposed = isDecomposed;
-	}
+    public void setIsAnalyzed(IsAnalyzed isAnalyzed) {
+        this.isAnalyzed = isAnalyzed;
+    }
 
-	public IsAnalyzed getIsAnalyzed() {
-		return isAnalyzed;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setIsAnalyzed(IsAnalyzed isAnalyzed) {
-		this.isAnalyzed = isAnalyzed;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
 }

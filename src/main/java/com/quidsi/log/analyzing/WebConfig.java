@@ -16,6 +16,7 @@ import com.quidsi.core.platform.DefaultSiteWebConfig;
 import com.quidsi.core.platform.web.DeploymentSettings;
 import com.quidsi.core.platform.web.site.SiteSettings;
 import com.quidsi.core.platform.web.site.session.SessionProviderType;
+import com.quidsi.log.analyzing.web.interceptor.LoginRequiredInterceptor;
 
 /**
  * @author neo
@@ -25,9 +26,6 @@ public class WebConfig extends DefaultSiteWebConfig {
 
     @Inject
     Environment env;
-
-    @Inject
-    EntityManagerFactory entityManagerFactory;
 
     @Inject
     ServletContext servletContext;
@@ -62,13 +60,23 @@ public class WebConfig extends DefaultSiteWebConfig {
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
+    @Inject
+    EntityManagerFactory entityManagerFactory;
+
+    @Bean
+    public LoginRequiredInterceptor loginRequiredInterceptor() {
+        return new LoginRequiredInterceptor();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(exceptionInterceptor());
         registry.addInterceptor(requestContextInterceptor());
-        registry.addInterceptor(trackInterceptor());
-        OpenEntityManagerInViewInterceptor interceptor = new OpenEntityManagerInViewInterceptor();
-        interceptor.setEntityManagerFactory(entityManagerFactory);
-        registry.addWebRequestInterceptor(interceptor);
+        OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor = new OpenEntityManagerInViewInterceptor();
+        openEntityManagerInViewInterceptor.setEntityManagerFactory(entityManagerFactory);
+        registry.addWebRequestInterceptor(openEntityManagerInViewInterceptor);
+        registry.addInterceptor(cookieInterceptor());
+        registry.addInterceptor(sessionInterceptor());
+        registry.addInterceptor(loginRequiredInterceptor());
     }
 }
