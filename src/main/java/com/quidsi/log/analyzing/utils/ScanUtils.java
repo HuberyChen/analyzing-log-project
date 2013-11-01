@@ -49,7 +49,7 @@ public class ScanUtils {
         Stack<File> fileStack = new Stack<File>();
         fileStack.add(root);
         final List<Pattern> fileNamePatterns = new ArrayList<Pattern>();
-        if (!CollectionUtils.isEmpty(fileNamePatterns)) {
+        if (!CollectionUtils.isEmpty(nameFilters)) {
             for (String f : nameFilters) {
                 fileNamePatterns.add(Pattern.compile(f));
             }
@@ -87,7 +87,7 @@ public class ScanUtils {
     public static String scanByPathFilter(String absolutePath, String filePath, List<String> pathFilters) {
         boolean pathIsMatch = true;
         final List<Pattern> pathPatterns = new ArrayList<Pattern>();
-        if (!CollectionUtils.isEmpty(pathPatterns)) {
+        if (!CollectionUtils.isEmpty(pathFilters)) {
             for (String f : pathFilters) {
                 pathPatterns.add(Pattern.compile(f));
             }

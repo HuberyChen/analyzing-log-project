@@ -1,19 +1,18 @@
 package com.quidsi.log.analyzing.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
+import com.quidsi.log.analyzing.dao.LogFileDao;
+import com.quidsi.log.analyzing.domain.LogFile;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.quidsi.core.util.StringUtils;
-import com.quidsi.log.analyzing.dao.LogFileDao;
-import com.quidsi.log.analyzing.domain.LogFile;
+import javax.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class LogFileService {
@@ -42,7 +41,7 @@ public class LogFileService {
     }
 
     public List<LogFile> getLogFilesByFuzzyName(String date, int projectId, int serverId) {
-        return logFileDao.getLogFilesByFuzzyName(dateFormat(date), projectId, serverId);
+        return logFileDao.getLogFilesByFuzzyName(date, projectId, serverId);
     }
 
     public List<LogFile> getLogFilesByType(String logType) {
@@ -63,7 +62,8 @@ public class LogFileService {
 
         List<String> nameFilters = new ArrayList<>();
         nameFilters.add(dataMatchAll(ServiceConstant.LOG_SUFFIX));
-        nameFilters.add(dataMatchAll(dateFormat(date)));
+        nameFilters.add(dataMatchAll(ServiceConstant.LOG_TYPE_ACTION));
+        nameFilters.add(dataMatchAll(date));
 
         filterMap.put(ServiceConstant.NAMEFILTERS, nameFilters);
         return filterMap;
@@ -71,16 +71,6 @@ public class LogFileService {
 
     private String dataMatchAll(String data) {
         return ServiceConstant.MATCH_ALL + data + ServiceConstant.MATCH_ALL;
-    }
-
-    private String dateFormat(String date) {
-        if (StringUtils.hasText(date)) {
-            StringBuilder dateString = new StringBuilder();
-            String[] dateMessage = date.split("/");
-            dateString.append(dateMessage[2]).append("-").append(dateMessage[0]).append("-").append(dateMessage[1]);
-            return dateString.toString();
-        }
-        return date;
     }
 
     @Inject

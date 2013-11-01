@@ -24,10 +24,6 @@ public class ProjectDao {
         return jpaAccess.find("from " + Project.class.getName(), null);
     }
 
-    public int getMaxProjectId() {
-        return jpaAccess.findUniqueResult("SELECT MAX(Id) FROM " + Project.class.getName(), null);
-    }
-
     public Project getProjectById(int id) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();

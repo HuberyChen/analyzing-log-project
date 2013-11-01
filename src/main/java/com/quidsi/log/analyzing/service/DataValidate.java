@@ -29,14 +29,15 @@ public class DataValidate {
 
         String projectName = request.getProjectName();
         String serverName = request.getServerName();
-        String date = request.getDate();
+        String startDate = request.getStartDate();
+        String endDate = request.getEndDate();
 
         if (!projectName.equals(ServiceConstant.TYPE_ALL) && serverName.equals(ServiceConstant.TYPE_ALL)) {
-            return getLogFileWrapperWithServerAll(date, path, projectName, logFileWrappers);
+            return getLogFileWrapperWithServerAll(startDate, endDate, path, projectName, logFileWrappers);
         }
 
         if (projectName.equals(ServiceConstant.TYPE_ALL) && serverName.equals(ServiceConstant.TYPE_ALL)) {
-            return getLogFileWrapperWithProjectAndServerAll(date, path, logFileWrappers);
+            return getLogFileWrapperWithProjectAndServerAll(startDate, endDate, path, logFileWrappers);
         }
 
         Project project = projectService.getProjectByName(projectName);
@@ -48,12 +49,12 @@ public class DataValidate {
         if (null == server) {
             throw new IllegalStateException(String.format("%s does not have instance", project.getName()));
         }
-        logFileWrappers.add(new LogFileWrapper(project, server, date, path));
+        logFileWrappers.add(new LogFileWrapper(project, server, startDate, endDate, path));
         return logFileWrappers;
 
     }
 
-    private List<LogFileWrapper> getLogFileWrapperWithProjectAndServerAll(String date, String path, List<LogFileWrapper> logFileWrappers) {
+    private List<LogFileWrapper> getLogFileWrapperWithProjectAndServerAll(String startDate, String endDate, String path, List<LogFileWrapper> logFileWrappers) {
         List<Project> projects = projectService.getProjects();
         if (CollectionUtils.isEmpty(projects)) {
             throw new IllegalStateException("Projects are not existed");
@@ -65,7 +66,7 @@ public class DataValidate {
                 continue;
             }
             for (Server server : servers) {
-                logFileWrappers.add(new LogFileWrapper(project, server, date, path));
+                logFileWrappers.add(new LogFileWrapper(project, server, startDate, endDate, path));
             }
         }
 
@@ -75,7 +76,7 @@ public class DataValidate {
         return logFileWrappers;
     }
 
-    private List<LogFileWrapper> getLogFileWrapperWithServerAll(String date, String path, String projectName, List<LogFileWrapper> logFileWrappers) {
+    private List<LogFileWrapper> getLogFileWrapperWithServerAll(String startDate, String endDate, String path, String projectName, List<LogFileWrapper> logFileWrappers) {
         Project project = projectService.getProjectByName(projectName);
         if (null == project) {
             throw new IllegalStateException("Project is not existed");
@@ -85,7 +86,7 @@ public class DataValidate {
             throw new IllegalStateException(String.format("%s does not have instance", projectName));
         }
         for (Server server : servers) {
-            logFileWrappers.add(new LogFileWrapper(project, server, date, path));
+            logFileWrappers.add(new LogFileWrapper(project, server, startDate, endDate, path));
         }
         return logFileWrappers;
 

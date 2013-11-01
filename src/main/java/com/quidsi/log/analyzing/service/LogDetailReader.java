@@ -26,35 +26,38 @@ public class LogDetailReader {
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
 
-    @Transactional
-    public void saveActionLogDetail(List<LogFile> logFiles) {
+    public void saveActionLogDetails(List<LogFile> logFiles) {
         if (CollectionUtils.isEmpty(logFiles)) {
             return;
         }
         for (LogFile logFile : logFiles) {
-
-            if (logFile.getIsAnalyzed().equals(LogFile.IsAnalyzed.Y)) {
-                continue;
-            }
-
-            List<ActionLogDetail> records = new ArrayList<>();
-            File file = new File(logFile.getAbsolutePath());
-            Map<Integer, String[]> messageMap = FileFactory.logRead(file);
-
-            if (CollectionUtils.isEmpty(messageMap)) {
-                continue;
-            }
-
-            for (Entry<Integer, String[]> entry : messageMap.entrySet()) {
-                records.add(dataConverToRecord(entry.getValue(), logFile.getId()));
-            }
-            if (CollectionUtils.isEmpty(records)) {
-                continue;
-            }
-            actionLogDetailService.saveList(records);
-            logFile.setIsAnalyzed(LogFile.IsAnalyzed.Y);
-            logFileService.update(logFile);
+            saveActionLogDetail(logFile);
         }
+    }
+
+    @Transactional
+    private void saveActionLogDetail(LogFile logFile) {
+        if (logFile.getIsAnalyzed().equals(LogFile.IsAnalyzed.Y)) {
+            return;
+        }
+
+        List<ActionLogDetail> records = new ArrayList<>();
+        File file = new File(logFile.getAbsolutePath());
+        Map<Integer, String[]> messageMap = FileFactory.logRead(file);
+
+        if (CollectionUtils.isEmpty(messageMap)) {
+            return;
+        }
+
+        for (Entry<Integer, String[]> entry : messageMap.entrySet()) {
+            records.add(dataConverToRecord(entry.getValue(), logFile.getId()));
+        }
+        if (CollectionUtils.isEmpty(records)) {
+            return;
+        }
+        actionLogDetailService.saveList(records);
+        logFile.setIsAnalyzed(LogFile.IsAnalyzed.Y);
+        logFileService.update(logFile);
     }
 
     private ActionLogDetail dataConverToRecord(String[] messages, int logId) {

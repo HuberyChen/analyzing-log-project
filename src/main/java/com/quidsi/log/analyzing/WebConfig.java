@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 import com.quidsi.core.platform.DefaultSiteWebConfig;
 import com.quidsi.core.platform.web.DeploymentSettings;
@@ -78,5 +79,10 @@ public class WebConfig extends DefaultSiteWebConfig {
         registry.addInterceptor(cookieInterceptor());
         registry.addInterceptor(sessionInterceptor());
         registry.addInterceptor(loginRequiredInterceptor());
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("forward:/login");
     }
 }

@@ -9,8 +9,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActionLogAnalyzingRequest {
 
-    @XmlElement(name = "date")
-    private String date;
+    @XmlElement(name = "startDate")
+    private String startDate;
+
+    @XmlElement(name = "endDate")
+    private String endDate;
 
     @XmlElement(name = "project")
     private String projectName;
@@ -34,12 +37,20 @@ public class ActionLogAnalyzingRequest {
         this.serverName = serverName;
     }
 
-    public String getDate() {
-        return date;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
 }

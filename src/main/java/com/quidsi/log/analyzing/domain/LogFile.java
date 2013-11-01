@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Index;
+
 @Entity(name = "Log_File")
 public class LogFile {
 
@@ -16,6 +18,7 @@ public class LogFile {
     private int id;
 
     @Column(name = "LogName")
+    @Index(name = "IX_Log_File_Name_Project_Server", columnNames = { "LogName", "ProjectId", "ServerId" })
     private String logName;
 
     @Column(name = "ProjectId")

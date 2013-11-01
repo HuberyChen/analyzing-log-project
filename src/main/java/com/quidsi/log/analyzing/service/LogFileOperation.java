@@ -58,7 +58,7 @@ public class LogFileOperation {
         if (CollectionUtils.isEmpty(logFiles)) {
             return logFileWrapper;
         }
-        logDetailReader.saveActionLogDetail(logFiles);
+        logDetailReader.saveActionLogDetails(logFiles);
         return logFileWrapper;
     }
 

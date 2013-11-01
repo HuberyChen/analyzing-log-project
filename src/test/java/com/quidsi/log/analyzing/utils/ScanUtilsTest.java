@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
 import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.service.ServiceConstant;
 
 public class ScanUtilsTest {
 
@@ -18,16 +19,16 @@ public class ScanUtilsTest {
         Map<String, List<String>> filterMap = new HashMap<>();
 
         List<String> pathFilters = new ArrayList<>();
-        pathFilters.add("[\\S]*GIFTCOSERVER[\\S]*");
-        pathFilters.add("[\\S]*Prod-gcsvc1[\\S]*");
+        pathFilters.add(ServiceConstant.MATCH_ALL + "giftco-service" + ServiceConstant.MATCH_ALL);
+        pathFilters.add(ServiceConstant.MATCH_ALL + "Prod-gcsvc1" + ServiceConstant.MATCH_ALL);
         filterMap.put("pathFilters", pathFilters);
 
         List<String> nameFilters = new ArrayList<>();
-        nameFilters.add("[\\S]*.log[\\S]*");
-
+        nameFilters.add(ServiceConstant.MATCH_ALL + ".log" + ServiceConstant.MATCH_ALL);
+        nameFilters.add(ServiceConstant.MATCH_ALL + "2013-10-26" + ServiceConstant.MATCH_ALL);
         filterMap.put("nameFilters", nameFilters);
 
-        List<String> logs = ScanUtils.scan("D:\\test", filterMap.get("pathFilters"), filterMap.get("nameFilters"));
+        List<String> logs = ScanUtils.scan("D:\\test", filterMap.get("nameFilters"), filterMap.get("pathFilters"));
         if (CollectionUtils.isEmpty(logs)) {
             return;
         }

@@ -11,7 +11,7 @@
     <!--[if lt IE 9]>
     <@js src="json2.js"/>
     <![endif]-->
-   	<@css href="foundation.min.css" rel="stylesheet" type="text/css"/> 
+   	<@css href="login.css" rel="stylesheet" type="text/css"/> 
    	<@js src="jquery.min.js,common.js"/>
     <script type="text/javascript">
         golbalRootUrl = "<@url value='/' />";

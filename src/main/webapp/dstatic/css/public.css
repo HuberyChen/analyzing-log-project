@@ -1,7 +1,6 @@
 .clearfix:before,
 .clearfix:after {
 content:"";
-display:table;
 }
 .clearfix:after {
 clear:both;
@@ -11,19 +10,17 @@ overflow:hidden;
 zoom:1; /* IE < 8 */
 }
 .container{
-	max-width:500px;
+	max-width:480px;
 	border:1px solid #DDDDDD;
 	border-radius: 5px;
 	box-shadow: 0 0 5px rgba(0,0,0,0.4);
-	padding:10px 10px 30px;
+	padding:10px 10px;
 	position:relative;
 	left:50%;
 	margin-left:-250px;
-	margin-top:100px;
 }
 select,input[type=date]{
 	width:17em;
-	height:2em;
 	line-height: 2em;
 	padding-left: 0px;
 }

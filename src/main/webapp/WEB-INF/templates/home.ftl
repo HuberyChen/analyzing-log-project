@@ -1,22 +1,50 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
-	<title>Quidsi, Inc. |Log Analyzing Portal</title>
+	<title>Quidsi, Inc. |Log Analyzing</title>
     <meta charset="utf-8"/>
-    <@css href="ui.datepicker.min.css,public.css" rel="stylesheet" type="text/css"/> 
-    <@js src="jquery.min.js,jquery.form.js,common.js,ui.datepicker.js"/>
+    <@css href="ui.datepicker.min.css,public.css,home.css" rel="stylesheet" type="text/css"/> 
+    <@js src="jquery.min.js,jquery.form.js,common.js,ui.datepicker.js,jquery.validate.js"/>
 </head>
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#date").datepicker();
+	$("#startDate").datepicker();
+	$("#endDate").datepicker();
+	$("#analyzingLogForm").validate({
+        messages: {
+           startDate:{
+               required:"Start date is required."
+           },
+           endDate:{
+               required:"End date is required."
+           },
+       },
+       errorPlacement:function(error,element){
+           error.appendTo($("#errInfo"));
+       },
+       success:function(error,element){
+            error.parent("li").remove();
+            error.remove();
+       },
+       wrapper:"li"
+    });
 });
 </script>
 <body>
 
-<h1>Analyzing Log</span></h1>
+<nav class="top-bar">
+	<ul class="title-area">
+		<li class="name">
+			<h1><span style="color:White;">Analyzing Log</span></h1>
+		</li>
+	</ul>
+	<ul class="right"><li class="has-form"><a class="small radius button" href="<@url value='/signOut'/>">Logout</a></li></ul>
+</nav>
+
 <div class="main">
 	<div class="container">
 		<form id="analyzingLogForm" action="<@url value='/project/instance/log/action'/>" method="post">
+			<div><p id="errInfo" class="errorBox"></p></div>
 			<table class="anlyzinglog-tb">
 				<tr>
 					<td>Project:</td>
@@ -38,8 +66,12 @@ $(document).ready(function() {
 					</td>
 				</tr>
 				<tr>
-					<td>Date:</td>
-					<td><input class="date left hasDatePicker"readonly="readonly" type="date" id="date" name="date" /></td>
+					<td>Start Date:</td>
+					<td><input class="date left hasDatePicker required" readonly="readonly" type="date" id="startDate" name="startDate" /></td>
+				</tr>
+				<tr>
+					<td>End Date:</td>
+					<td><input class="date left hasDatePicker required" readonly="readonly" type="date" id="endDate" name="endDate" /></td>
 				</tr>
 				<tr>
 					<td></td>
@@ -47,7 +79,6 @@ $(document).ready(function() {
 						<input id="button" type="button" onclick="analyzingLog()" value="confirm"/>
 						<span class="loadingDiv displayNone" id="loadingLogo"></span>
 						</p>
-						<input class="right" type="button" value="Logout" onclick=""window.location.href="<@url value='/signOut'/>"" />
 					</td>
 				</tr>
 			</table>
@@ -77,6 +108,18 @@ $(document).ready(function() {
 	}
 	
 	function analyzingLog(){
+		if(!$("#analyzingLogForm").valid()){
+        	return false;
+    	}
+    	
+    	var start = $("#startDate").val();
+    	var end = $("#endDate").val();
+    	var sDate = new Date(start.replace(/\-/g,'/')); 
+        var eDate = new Date(end.replace(/\-/g,'/')); 
+    	if(start > end){
+    		alert("End date cannot be less than start date");
+    		return;
+    	}
 		$("#loadingLogo").css("display","inline-block");
 		$("#button").attr('disabled',true);
 		$("#button").css({'background':'gray','border-color':'gray'});
@@ -86,6 +129,7 @@ $(document).ready(function() {
 	    	} else {
 	    		alert("failure");
 	    	}
+	    	$("#button").attr('disabled',false);
         	window.location.reload();
         },validate:false});
 	}

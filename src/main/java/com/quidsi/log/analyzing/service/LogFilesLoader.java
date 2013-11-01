@@ -1,23 +1,23 @@
 package com.quidsi.log.analyzing.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.utils.ScanUtils;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import javax.inject.Inject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Component
 public class LogFilesLoader {
@@ -28,14 +28,28 @@ public class LogFilesLoader {
 
     public LogFileWrapper loaderAllLog(LogFileWrapper logFileWrapper) {
 
-        String date = logFileWrapper.getDate();
         Project project = logFileWrapper.getProject();
         Server server = logFileWrapper.getServer();
         String path = logFileWrapper.getPath();
+        List<String> dateList = logFileWrapper.getDateRange();
 
-        logFileWrapper.getAllLogFiles().addAll(getFileWrapperAllFile(project, server, date, path));
+        if (CollectionUtils.isEmpty(dateList)) {
+            throw new IllegalStateException("Date is null");
+        }
 
-        logFileWrapper.getLogFilesHistories().addAll(logFileService.getLogFilesByFuzzyName(date, project.getId(), server.getId()));
+        for (String date : dateList) {
+            List<LogFile> allFiles = getFileWrapperAllFile(project, server, date, path);
+
+            if (!CollectionUtils.isEmpty(allFiles)) {
+                logFileWrapper.getAllLogFiles().addAll(allFiles);
+            }
+
+            List<LogFile> logFilesHistories = logFileService.getLogFilesByFuzzyName(date, project.getId(), server.getId());
+
+            if (!CollectionUtils.isEmpty(logFilesHistories)) {
+                logFileWrapper.getLogFilesHistories().addAll(logFilesHistories);
+            }
+        }
 
         return logFileWrapper;
     }
@@ -43,6 +57,9 @@ public class LogFilesLoader {
     private List<LogFile> getFileWrapperAllFile(Project project, Server server, String date, String path) {
         Map<String, List<String>> filterMap = logFileService.initializeFilters(project.getName(), server.getServerName(), date);
         List<String> logPaths = ScanUtils.scan(path, filterMap.get(ServiceConstant.PATHFILTERS), filterMap.get(ServiceConstant.NAMEFILTERS));
+        if (CollectionUtils.isEmpty(logPaths)) {
+            return null;
+        }
         return mapConverToList(generateLogFiles(logPaths, server));
     }
 
