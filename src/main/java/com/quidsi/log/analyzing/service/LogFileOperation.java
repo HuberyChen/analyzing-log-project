@@ -1,20 +1,21 @@
 package com.quidsi.log.analyzing.service;
 
+import com.quidsi.core.util.StringUtils;
+import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.domain.LogFileWrapper;
+import com.quidsi.log.analyzing.utils.FileFactory;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import javax.inject.Inject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
-import com.quidsi.log.analyzing.domain.LogFile;
-import com.quidsi.log.analyzing.domain.LogFileWrapper;
-import com.quidsi.log.analyzing.utils.FileFactory;
 
 @Component
 public class LogFileOperation {
@@ -44,6 +45,9 @@ public class LogFileOperation {
         for (LogFile logFile : uncompressionActionLogs) {
             if (logFile.getIsDecomposed().equals(LogFile.IsDecomposed.N) && logFile.getLogType().equals(ServiceConstant.LOG_TYPE_ACTION)) {
                 String absolutePath = FileFactory.unGz(new File(logFile.getAbsolutePath()));
+                if (!StringUtils.hasText(absolutePath)) {
+                    throw new IllegalStateException("Log is decomposed");
+                }
                 logFile.setIsDecomposed(LogFile.IsDecomposed.Y);
                 logFile.setAbsolutePath(absolutePath);
                 logFileService.update(logFile);
@@ -54,11 +58,14 @@ public class LogFileOperation {
     }
 
     public LogFileWrapper saveActionLogDetail(LogFileWrapper logFileWrapper) {
-        List<LogFile> logFiles = logFileWrapper.getLogFilesHistories();
-        if (CollectionUtils.isEmpty(logFiles)) {
+        List<LogFile> unAnalyzedlogFiles = logFileWrapper.getLogFilesHistories();
+        if (CollectionUtils.isEmpty(unAnalyzedlogFiles)) {
             return logFileWrapper;
         }
-        logDetailReader.saveActionLogDetails(logFiles);
+
+        for (LogFile logFile : unAnalyzedlogFiles) {
+            logDetailReader.saveActionLogDetail(logFile);
+        }
         return logFileWrapper;
     }
 

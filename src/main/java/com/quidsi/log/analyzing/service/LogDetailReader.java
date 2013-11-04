@@ -1,18 +1,5 @@
 package com.quidsi.log.analyzing.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import com.quidsi.core.util.Convert;
 import com.quidsi.core.util.DateUtils;
 import com.quidsi.core.util.StringUtils;
@@ -20,23 +7,27 @@ import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.utils.FileFactory;
 
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import javax.inject.Inject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 @Component
 public class LogDetailReader {
 
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
 
-    public void saveActionLogDetails(List<LogFile> logFiles) {
-        if (CollectionUtils.isEmpty(logFiles)) {
-            return;
-        }
-        for (LogFile logFile : logFiles) {
-            saveActionLogDetail(logFile);
-        }
-    }
-
     @Transactional
-    private void saveActionLogDetail(LogFile logFile) {
+    public void saveActionLogDetail(LogFile logFile) {
         if (logFile.getIsAnalyzed().equals(LogFile.IsAnalyzed.Y)) {
             return;
         }

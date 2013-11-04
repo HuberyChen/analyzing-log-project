@@ -1,15 +1,16 @@
 package com.quidsi.log.analyzing.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.service.ServiceConstant;
 
 import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
-import com.quidsi.log.analyzing.domain.LogFile;
-import com.quidsi.log.analyzing.service.ServiceConstant;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ScanUtilsTest {
 
@@ -25,16 +26,21 @@ public class ScanUtilsTest {
 
         List<String> nameFilters = new ArrayList<>();
         nameFilters.add(ServiceConstant.MATCH_ALL + ".log" + ServiceConstant.MATCH_ALL);
-        nameFilters.add(ServiceConstant.MATCH_ALL + "2013-10-26" + ServiceConstant.MATCH_ALL);
+        nameFilters.add(ServiceConstant.MATCH_ALL + "2013-11-02" + ServiceConstant.MATCH_ALL);
         filterMap.put("nameFilters", nameFilters);
 
-        List<String> logs = ScanUtils.scan("D:\\test", filterMap.get("nameFilters"), filterMap.get("pathFilters"));
+        List<String> logs = ScanUtils.scan("D:\\test", filterMap.get("pathFilters"), filterMap.get("nameFilters"));
         if (CollectionUtils.isEmpty(logs)) {
             return;
         }
         for (String logMessage : logs) {
             System.out.println(logMessage);
         }
+    }
+
+    @Test
+    public void fileFactoryTest() {
+        FileFactory.unGz(new File("D:\\test\\giftco-service\\Prod-gcsvc1\\2013\\10\\19\\action\\giftco-service-action.2013-11-02_05.log.gz"));
     }
 
     @Test

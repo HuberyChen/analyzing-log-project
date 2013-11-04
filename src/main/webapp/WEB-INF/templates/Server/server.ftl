@@ -39,8 +39,6 @@ $(document).ready(function() {
 		</li>
 	</ul>
 	<ul class="right"><li class="has-form"><a class="small radius button" href="<@url value='/signOut'/>">Logout</a></li></ul>
-	<ul class="right"><li class="has-form"><a class="small radius button" onclick="scheduleAnalyzingLog()">Schedule</a></li></ul>
-	<ul class="right"><li class="has-form"><a class="small radius button" href="<@url value='/project/details'/>">Project</a></li></ul>
 </nav>
 
 <div class="main">
@@ -90,25 +88,6 @@ $(document).ready(function() {
 </body>
 	<script type="text/javascript">
 	
-	function scheduleAnalyzingLog(){
-		$("#loadingLogo").css("display","inline-block");
-		$("#button").attr('disabled',true);
-		$("#button").css({'background':'gray','border-color':'gray'});
-		$.ajax({
-			type : "POST",
-			url : "<@url value='/project/instance/log/action/schedule'/>",
-			success : function(result) {
-				if(result.status == 'success'){
-		    		alert("success");
-		    	} else {
-		    		alert("failure");
-		    	}
-		    	$("#button").attr('disabled',false);
-	        	window.location.reload();
-			}
-		}); 
-	}
-	
 	function findServerByProject(object){
 		$("#default").nextAll().remove();
 		var projectName = $(object).val();
@@ -126,33 +105,6 @@ $(document).ready(function() {
 				}
 			}
 		}); 
-	}
-	
-	function analyzingLog(){
-		if(!$("#analyzingLogForm").valid()){
-        	return false;
-    	}
-    	
-    	var start = $("#startDate").val();
-    	var end = $("#endDate").val();
-    	var sDate = new Date(start.replace(/\-/g,'/')); 
-        var eDate = new Date(end.replace(/\-/g,'/')); 
-    	if(start > end){
-    		alert("End date cannot be less than start date");
-    		return;
-    	}
-		$("#loadingLogo").css("display","inline-block");
-		$("#button").attr('disabled',true);
-		$("#button").css({'background':'gray','border-color':'gray'});
-	    $("#analyzingLogForm").ajaxSubmit({callback:function(result){
-	    	if(result.status == 'success'){
-	    		alert("success");
-	    	} else {
-	    		alert("failure");
-	    	}
-	    	$("#button").attr('disabled',false);
-        	window.location.reload();
-        },validate:false});
 	}
 	</script>
 </html>

@@ -1,5 +1,7 @@
 package com.quidsi.log.analyzing.utils;
 
+import com.quidsi.log.analyzing.service.ServiceConstant;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,8 +12,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-
-import com.quidsi.log.analyzing.service.ServiceConstant;
 
 public final class FileFactory {
 
@@ -40,18 +40,20 @@ public final class FileFactory {
         StringBuilder dstDirectoryPath = new StringBuilder();
         String srcGzPath = file.getName();
         dstDirectoryPath.append(file.getParent());
-        byte[] buf = new byte[1024];
         srcGzPath = srcGzPath.replace(dstDirectoryPath.toString(), "");
         FileUtils.folderIsExists(dstDirectoryPath.append("//" + ServiceConstant.DECOMPRESSION).toString());
         dstDirectoryPath.append("//");
         File outFile = new File(dstDirectoryPath.append(srcGzPath.replace(ServiceConstant.GZ_SUFFIX, "")).toString());
-        if (!outFile.exists()) {
+        if (outFile.exists()) {
             return null;
         }
-        try (GZIPInputStream in = new GZIPInputStream(new FileInputStream(file)); 
+        try (GZIPInputStream in = new GZIPInputStream(new FileInputStream(file));
              OutputStream out = new FileOutputStream(outFile)) {
-            while (in.read(buf) > 0) {
-                out.write(buf, 0, in.read(buf));
+            byte[] buf = new byte[1024];
+            int len = in.read(buf);
+            while (len > 0) {
+                out.write(buf, 0, len);
+                len = in.read(buf);
             }
         } catch (Exception e) {
             e.printStackTrace();

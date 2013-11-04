@@ -1,5 +1,6 @@
 package com.quidsi.log.analyzing.service;
 
+import com.quidsi.core.util.StopWatch;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
@@ -7,6 +8,8 @@ import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.utils.ScanUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -21,6 +24,8 @@ import java.util.Map.Entry;
 
 @Component
 public class LogFilesLoader {
+
+    private final Logger logger = LoggerFactory.getLogger(LogFilesLoader.class);
 
     private LogFileService logFileService;
 
@@ -44,6 +49,7 @@ public class LogFilesLoader {
                 logFileWrapper.getAllLogFiles().addAll(allFiles);
             }
 
+            logger.info("get log files by fuzzy name={}, projectId={}, serverId={}", date, project.getId(), server.getId());
             List<LogFile> logFilesHistories = logFileService.getLogFilesByFuzzyName(date, project.getId(), server.getId());
 
             if (!CollectionUtils.isEmpty(logFilesHistories)) {
@@ -55,11 +61,14 @@ public class LogFilesLoader {
     }
 
     private List<LogFile> getFileWrapperAllFile(Project project, Server server, String date, String path) {
+        StopWatch watch = new StopWatch();
+        logger.info("scan log path={}", path);
         Map<String, List<String>> filterMap = logFileService.initializeFilters(project.getName(), server.getServerName(), date);
         List<String> logPaths = ScanUtils.scan(path, filterMap.get(ServiceConstant.PATHFILTERS), filterMap.get(ServiceConstant.NAMEFILTERS));
         if (CollectionUtils.isEmpty(logPaths)) {
             return null;
         }
+        logger.info("scan log elapsedTime={}, log number={}", watch.elapsedTime(), logPaths.size());
         return mapConverToList(generateLogFiles(logPaths, server));
     }
 
@@ -128,7 +137,7 @@ public class LogFilesLoader {
 
     private LogFile generateLogFileByLogName(String logName) {
         LogFile logFile = new LogFile();
-        if (logName.endsWith(ServiceConstant.GZ_SUFFIX)) {
+        if (logName.contains(ServiceConstant.GZ_SUFFIX)) {
             logName.replace(ServiceConstant.GZ_SUFFIX, "");
         }
         if (logName.contains(ServiceConstant.LOG_TYPE_ACTION)) {

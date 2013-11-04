@@ -1,5 +1,7 @@
 package com.quidsi.log.analyzing.utils;
 
+import org.springframework.util.CollectionUtils;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -7,12 +9,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-import org.springframework.util.CollectionUtils;
-
-import com.quidsi.core.util.StringUtils;
-
 public class ScanUtils {
-
     public static List<String> scanDirectoryFileName(String path) {
         List<String> filesName = new ArrayList<>();
         File root = new File(path);
@@ -40,7 +37,7 @@ public class ScanUtils {
         return file.getName();
     }
 
-    public static List<String> scan(String path, List<String> nameFilters, List<String> pathFilters) {
+    public static List<String> scan(String path, List<String> pathFilters, List<String> nameFilters) {
         List<String> logs = new ArrayList<>();
         File root = new File(path);
         if (!root.exists()) {
@@ -48,59 +45,64 @@ public class ScanUtils {
         }
         Stack<File> fileStack = new Stack<File>();
         fileStack.add(root);
-        final List<Pattern> fileNamePatterns = new ArrayList<Pattern>();
+        final List<Pattern> namePatterns = new ArrayList<Pattern>();
+        final List<Pattern> pathPatterns = new ArrayList<Pattern>();
         if (!CollectionUtils.isEmpty(nameFilters)) {
             for (String f : nameFilters) {
-                fileNamePatterns.add(Pattern.compile(f));
+                namePatterns.add(Pattern.compile(f));
+            }
+        }
+        if (!CollectionUtils.isEmpty(pathFilters)) {
+            for (String p : pathFilters) {
+                pathPatterns.add(Pattern.compile(p));
             }
         }
         while (!fileStack.isEmpty()) {
             final File file = fileStack.pop();
-            if (file.isDirectory()) {
-                for (File f : file.listFiles(new FileFilter() {
-                    public boolean accept(File file) {
-                        if (file.isDirectory())
-                            return true;
-                        if (CollectionUtils.isEmpty(fileNamePatterns)) {
-                            return true;
-                        }
-                        for (Pattern p : fileNamePatterns) {
-                            if (!p.matcher(file.getName()).matches()) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                })) {
-                    fileStack.add(f);
+            if (!file.isDirectory()) {
+                logs.add(file.getAbsolutePath());
+                continue;
+            }
+            for (File f : file.listFiles(new FileFilter() {
+                public boolean accept(File file) {
+                    return judgeAccept(file, pathPatterns, namePatterns);
                 }
-            } else {
-                String absolutePath = scanByPathFilter(file.getAbsolutePath(), file.getParent(), pathFilters);
-                if (StringUtils.hasText(absolutePath)) {
-                    logs.add(absolutePath);
-                }
+            })) {
+                fileStack.add(f);
             }
         }
         return logs;
     }
 
-    public static String scanByPathFilter(String absolutePath, String filePath, List<String> pathFilters) {
-        boolean pathIsMatch = true;
-        final List<Pattern> pathPatterns = new ArrayList<Pattern>();
-        if (!CollectionUtils.isEmpty(pathFilters)) {
-            for (String f : pathFilters) {
-                pathPatterns.add(Pattern.compile(f));
-            }
+    public static boolean judgeAccept(File file, List<Pattern> pathPatterns, List<Pattern> namePatterns) {
+        if (file.isDirectory() && CollectionUtils.isEmpty(pathPatterns)) {
+            return true;
+        }
+
+        if (file.isDirectory() && !CollectionUtils.isEmpty(pathPatterns)) {
             for (Pattern p : pathPatterns) {
-                if (!p.matcher(filePath).matches()) {
-                    pathIsMatch = false;
-                    break;
+                if (p.matcher(file.getAbsolutePath()).matches()) {
+                    return true;
                 }
             }
         }
-        if (pathIsMatch) {
-            return absolutePath;
+
+        if (!CollectionUtils.isEmpty(pathPatterns)) {
+            for (Pattern p : pathPatterns) {
+                if (!p.matcher(file.getAbsolutePath()).matches()) {
+                    return false;
+                }
+            }
         }
-        return null;
+
+        if (!CollectionUtils.isEmpty(namePatterns)) {
+            for (Pattern p : namePatterns) {
+                if (!p.matcher(file.getName()).matches()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
+
 }
