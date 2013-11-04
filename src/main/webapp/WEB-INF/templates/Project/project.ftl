@@ -4,7 +4,7 @@
 	<title>Quidsi, Inc. |Log Analyzing</title>
     <meta charset="utf-8"/>
     <@css href="home.css" rel="stylesheet" type="text/css"/> 
-    <@js src="jquery.min.js,jquery.form.js,common.js,ui.datepicker.js,jquery.validate.js"/>
+    <@js src="jquery.min.js"/>
 </head>
 <body>
 
