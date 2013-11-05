@@ -15,20 +15,20 @@ import javax.inject.Inject;
  */
 public class ActionLogAnalyzedJob extends SchedulerJob {
     private final Logger logger = LoggerFactory.getLogger(ActionLogAnalyzedJob.class);
-    private ActionLogAnalyzedService clearDataBaseRecordService;
+    private ActionLogAnalyzedService actionLogAnalyzedService;
 
     @Override
     protected void run() {
         StopWatch stopWatch = new StopWatch();
         logger.debug("start analyzing action log");
-        clearDataBaseRecordService.setJobName(this.getClass().getSimpleName());
-        clearDataBaseRecordService.process();
+        actionLogAnalyzedService.setJobName(this.getClass().getSimpleName());
+        actionLogAnalyzedService.process();
         logger.debug("end start analyzing action log, time {}ms", stopWatch.elapsedTime());
     }
 
     @Inject
-    public void setClearDataBaseRecordService(ActionLogAnalyzedService clearDataBaseRecordService) {
-        this.clearDataBaseRecordService = clearDataBaseRecordService;
+    public void setActionLogAnalyzedService(ActionLogAnalyzedService actionLogAnalyzedService) {
+        this.actionLogAnalyzedService = actionLogAnalyzedService;
     }
 
 }
