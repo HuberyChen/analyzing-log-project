@@ -11,21 +11,20 @@
 <nav class="top-bar">
 	<ul class="title-area">
 		<li class="name">
-			<h1><span style="color:White;">Analyzing Log</span></h1>
+			<h1><a href="<@url value='/home'/>/"><span style="color:White;">Analyzing Log</span></a></h1>
 		</li>
 	</ul>
 	<ul class="right"><li class="has-form"><a class="small radius button" href="<@url value='/signOut'/>">Logout</a></li></ul>
-	<ul class="right"><li class="has-form"><a class="small radius button" onclick="scanServer()">Scan New Server</a></li></ul>
 </nav>
 
 <div class="row">
 		<div class="large-12 columns">
+			<div><a class="small radius button" onclick="scanServer()">Scan New Server</a></div>
 			<table class="business-rules" style="width:100%" id="serverDisplayTable" name="serverDisplayTable">
 				<thead>
 					<tr>
 						<th>Server Id</th>
 						<th>Server Name</th>
-						<th>Project Id</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -33,8 +32,7 @@
 						<#list servers as server>
 							<tr>
 								<td>${server.id}</td>
-								<td>${server.name}</td>
-								<td>${server.projectId}</td>
+								<td>${server.serverName}</td>
 							</tr>
 						</#list>
 					</#if>

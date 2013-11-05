@@ -19,22 +19,29 @@
 
 <div class="row">
 		<div class="large-12 columns">
-			<div><a class="small radius button" onclick="scanProject()">Scan New Project</a></div>
-			<table class="business-rules" style="width:100%" id="projectDisplayTable" name="projectDisplayTable">
+			<table class="business-rules" style="width:100%" id="scheduleDisplayTable" name="scheduleDisplayTable">
 				<thead>
 					<tr>
-						<th>Project Id</th>
-						<th>Project Name</th>
+						<th>Start date</th>
+						<th>End date</th>
+						<th>Project</th>
 						<th>Instance</th>
+						<th>Effective start time</th>
+						<th>Effective end time</th>
+						<th>Status</th>
 					</tr>
 				</thead>
 				<tbody>
-					<#if projects??>
-						<#list projects as project>
+					<#if schedules??>
+						<#list schedules as schedule>
 							<tr>
-								<td>${project.id}</td>
-								<td>${project.name}</td>
-								<td><a href="<@url value='/server/details'/>?projectId=${project.id}">details</a></td>
+								<td>${schedule.startDate}</td>
+								<td>${schedule.endDate}</td>
+								<td>${schedule.project}</td>
+								<td>${schedule.instance}</td>
+								<td>${schedule.effectiveStartTime}</td>
+								<td>${schedule.effectiveEndTime}</td>
+								<td>${schedule.status}</td>
 							</tr>
 						</#list>
 					</#if>
@@ -44,14 +51,5 @@
 	</div>
 </body>
 <script type="text/javascript">
-	function scanProject(){
-		$.ajax({
-			type : "POST",
-			url : "<@url value='/project/project'/>",
-			success : function() {
-	        	window.location.reload(); 
-			}
-		}); 
-	}
 </script>
 </html>

@@ -1,0 +1,10 @@
+CREATE TABLE Schedule (
+	Id INT IDENTITY(1,1) NOT NULL ,
+	StartDate VARCHAR(20) NOT NULL ,
+	EndDate VARCHAR(20) NOT NULL ,
+	Project VARCHAR(30) NOT NULL ,
+	Instance VARCHAR(30) NOT NULL ,
+	EffectiveStartTime DATETIME NOT NULL ,
+	EffectiveEndTime DATETIME NULL ,
+	[Status] VARCHAR(10) NOT NULL ,
+)

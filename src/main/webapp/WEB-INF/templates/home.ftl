@@ -39,7 +39,6 @@ $(document).ready(function() {
 		</li>
 	</ul>
 	<ul class="right"><li class="has-form"><a class="small radius button" href="<@url value='/signOut'/>">Logout</a></li></ul>
-	<ul class="right"><li class="has-form"><a class="small radius button" onclick="scheduleAnalyzingLog()">Schedule</a></li></ul>
 	<ul class="right"><li class="has-form"><a class="small radius button" href="<@url value='/project/details'/>">Project</a></li></ul>
 </nav>
 

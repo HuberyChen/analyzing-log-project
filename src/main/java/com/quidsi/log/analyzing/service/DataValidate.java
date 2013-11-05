@@ -3,8 +3,8 @@ package com.quidsi.log.analyzing.service;
 import com.quidsi.core.util.DateUtils;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.domain.Project;
+import com.quidsi.log.analyzing.domain.Schedule;
 import com.quidsi.log.analyzing.domain.Server;
-import com.quidsi.log.analyzing.web.request.ActionLogAnalyzingRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +36,14 @@ public class DataValidate {
         return builder.toString();
     }
 
-    public List<LogFileWrapper> initializeLogFileWrappers(ActionLogAnalyzingRequest request, String path) {
+    public List<LogFileWrapper> initializeLogFileWrappers(Schedule schedule, String path) {
 
         List<LogFileWrapper> logFileWrappers = new ArrayList<>();
 
-        String projectName = request.getProjectName();
-        String serverName = request.getServerName();
-        String startDate = request.getStartDate();
-        String endDate = request.getEndDate();
+        String projectName = schedule.getProject();
+        String serverName = schedule.getInstance();
+        String startDate = schedule.getStartDate();
+        String endDate = schedule.getEndDate();
 
         if (!projectName.equals(ServiceConstant.TYPE_ALL) && serverName.equals(ServiceConstant.TYPE_ALL)) {
             return getLogFileWrapperWithServerAll(startDate, endDate, path, projectName, logFileWrappers);

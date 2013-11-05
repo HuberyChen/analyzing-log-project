@@ -1,9 +1,16 @@
 package com.quidsi.log.analyzing;
 
-import java.sql.Connection;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
+import com.quidsi.core.crypto.EncryptionUtils;
+import com.quidsi.core.database.ConnectionPoolDataSource;
+import com.quidsi.core.database.JDBCAccess;
+import com.quidsi.core.database.JPAAccess;
+import com.quidsi.core.platform.DefaultAppConfig;
+import com.quidsi.core.platform.PlatformScopeResolver;
+import com.quidsi.core.platform.runtime.RuntimeEnvironment;
+import com.quidsi.core.platform.runtime.RuntimeSettings;
+import com.quidsi.core.platform.scheduler.SchedulerImpl;
+import com.quidsi.core.util.ClasspathResource;
+import com.quidsi.log.analyzing.scheduler.service.SchedulerSettings;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,15 +22,10 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.quidsi.core.crypto.EncryptionUtils;
-import com.quidsi.core.database.ConnectionPoolDataSource;
-import com.quidsi.core.database.JDBCAccess;
-import com.quidsi.core.database.JPAAccess;
-import com.quidsi.core.platform.DefaultAppConfig;
-import com.quidsi.core.platform.PlatformScopeResolver;
-import com.quidsi.core.platform.runtime.RuntimeEnvironment;
-import com.quidsi.core.platform.runtime.RuntimeSettings;
-import com.quidsi.core.util.ClasspathResource;
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
+import java.sql.Connection;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -81,5 +83,17 @@ public class AppConfig extends DefaultAppConfig {
         JDBCAccess jdbcAccess = new JDBCAccess();
         jdbcAccess.setDataSource(dataSource());
         return jdbcAccess;
+    }
+
+    @Bean
+    SchedulerImpl scheduler() {
+        return new SchedulerImpl();
+    }
+
+    @Bean
+    public SchedulerSettings schedulerSettings() {
+        SchedulerSettings settings = new SchedulerSettings();
+        settings.setLogAnalyzedCron(env.getRequiredProperty("log.analyzed.cron"));
+        return settings;
     }
 }

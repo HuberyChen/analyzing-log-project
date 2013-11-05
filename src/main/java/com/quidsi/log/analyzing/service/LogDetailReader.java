@@ -34,6 +34,9 @@ public class LogDetailReader {
 
         List<ActionLogDetail> records = new ArrayList<>();
         File file = new File(logFile.getAbsolutePath());
+        if (!file.exists()) {
+            throw new IllegalStateException("file is not exists");
+        }
         Map<Integer, String[]> messageMap = FileFactory.logRead(file);
 
         if (CollectionUtils.isEmpty(messageMap)) {

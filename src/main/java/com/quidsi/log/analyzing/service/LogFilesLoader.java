@@ -93,7 +93,11 @@ public class LogFilesLoader {
             LogFile logFile = generateLogFile(logPath, server);
             LogFile logFileIsExisted = logFiles.get(logFile.getLogName());
 
-            if (null != logFileIsExisted && !logFileIsExisted.getAbsolutePath().equals(logFile.getAbsolutePath()) && logFile.getAbsolutePath().contains(ServiceConstant.DECOMPRESSION)) {
+            if (logFile.getAbsolutePath().contains(ServiceConstant.DECOMPRESSION)) {
+                logFile.setIsDecomposed(LogFile.IsDecomposed.Y);
+            }
+
+            if (null != logFileIsExisted && logFileIsExisted.getIsDecomposed().equals(LogFile.IsDecomposed.N) && logFile.getAbsolutePath().contains(ServiceConstant.DECOMPRESSION)) {
 
                 logFileIsExisted.setAbsolutePath(logFile.getAbsolutePath());
                 logFileIsExisted.setIsDecomposed(LogFile.IsDecomposed.Y);
@@ -137,13 +141,14 @@ public class LogFilesLoader {
 
     private LogFile generateLogFileByLogName(String logName) {
         LogFile logFile = new LogFile();
+        String log = logName;
         if (logName.contains(ServiceConstant.GZ_SUFFIX)) {
-            logName.replace(ServiceConstant.GZ_SUFFIX, "");
+            log = logName.replace(ServiceConstant.GZ_SUFFIX, "");
         }
         if (logName.contains(ServiceConstant.LOG_TYPE_ACTION)) {
             logFile.setLogType(ServiceConstant.LOG_TYPE_ACTION);
         }
-        logFile.setLogName(logName.replace(ServiceConstant.LOG_SUFFIX, ""));
+        logFile.setLogName(log.replace(ServiceConstant.LOG_SUFFIX, ""));
         return logFile;
     }
 

@@ -1,5 +1,7 @@
 package com.quidsi.log.analyzing.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
@@ -10,6 +12,9 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 public class ScanUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScanUtils.class);
+
     public static List<String> scanDirectoryFileName(String path) {
         List<String> filesName = new ArrayList<>();
         File root = new File(path);
@@ -43,6 +48,7 @@ public class ScanUtils {
         if (!root.exists()) {
             return null;
         }
+        LOGGER.info("root exists");
         Stack<File> fileStack = new Stack<File>();
         fileStack.add(root);
         final List<Pattern> namePatterns = new ArrayList<Pattern>();
