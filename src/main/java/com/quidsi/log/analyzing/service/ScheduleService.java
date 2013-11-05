@@ -1,36 +1,40 @@
 package com.quidsi.log.analyzing.service;
 
-import com.quidsi.log.analyzing.dao.ScheduleDao;
-import com.quidsi.log.analyzing.domain.Schedule;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-
-import java.util.List;
+import com.quidsi.log.analyzing.dao.ScheduleDao;
+import com.quidsi.log.analyzing.domain.Schedule;
 
 @Service
 public class ScheduleService {
 
-    private ScheduleDao scheduleDao;
+	private ScheduleDao scheduleDao;
 
-    @Transactional
-    public int save(Schedule schedule) {
-        return scheduleDao.save(schedule);
-    }
+	@Transactional
+	public int save(Schedule schedule) {
+		return scheduleDao.save(schedule);
+	}
 
-    @Transactional
-    public void update(Schedule schedule) {
-        scheduleDao.update(schedule);
-    }
+	@Transactional
+	public void update(Schedule schedule) {
+		scheduleDao.update(schedule);
+	}
 
-    public List<Schedule> getSchedules() {
-        return scheduleDao.getSchedules();
-    }
+	public List<Schedule> getSchedulesWait() {
+		return scheduleDao.getSchedulesWait();
+	}
 
-    @Inject
-    public void setScheduleDao(ScheduleDao scheduleDao) {
-        this.scheduleDao = scheduleDao;
-    }
+	public List<Schedule> getSchedules() {
+		return scheduleDao.getSchedules();
+	}
+
+	@Inject
+	public void setScheduleDao(ScheduleDao scheduleDao) {
+		this.scheduleDao = scheduleDao;
+	}
 }
