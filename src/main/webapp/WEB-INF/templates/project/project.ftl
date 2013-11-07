@@ -77,7 +77,7 @@ function openAddProject(){
 		success : function(result) {
 			var projectsNotExisted = result.projectsNotExisted;
 			if (0==projectsNotExisted.length){
-				alert("have not new project");
+				alert("there is no new project");
 			}else{
 				for(i=0;i<projectsNotExisted.length;i++){
 					var input="<div id=" + projectsNotExisted[i] + " class=\"row\"><div class=\"large-4 columns text-right\"><label class=\"right-label\">Project Name:</label></div><div class=\"large-4 columns text-right\"><label class=\"right-label\">" + projectsNotExisted[i] + "</label></div><div class=\"large-4 columns text-right\"><a class=\"small radius button\" style=\"padding: 0.2em 0.5em 0.2em\" onclick=\"addProject(" + projectsNotExisted[i] + ")\">add</a></div></div>";
@@ -104,7 +104,6 @@ function addProject(object){
 			}
 		}
 	});
-	
 }
 	
 </script>
