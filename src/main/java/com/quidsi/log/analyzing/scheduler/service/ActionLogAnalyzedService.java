@@ -31,11 +31,24 @@ public class ActionLogAnalyzedService {
             actionLogSchedule.setNote(actionLogSchedule.getNote() + "analyzing action log in project = " + logFileWrapper.getProject().getName() + " and instance = "
                     + logFileWrapper.getServer().getServerName() + ". ");
             scheduleService.update(actionLogSchedule);
+
             logFileOperation.saveLogFilesNotExisted(logFileWrapper);
+            if (!StringUtils.hasText(logFileWrapper.getNote())) {
+                logFileWrapper.setNote("saving log files is not excuting. ");
+            }
+            actionLogSchedule.setNote(actionLogSchedule.getNote() + logFileWrapper.getNote());
+            scheduleService.update(actionLogSchedule);
+
             logFileOperation.decompression(logFileWrapper);
+            if (!StringUtils.hasText(logFileWrapper.getNote())) {
+                logFileWrapper.setNote("decompressing log files is not excuting. ");
+            }
+            actionLogSchedule.setNote(actionLogSchedule.getNote() + logFileWrapper.getNote());
+            scheduleService.update(actionLogSchedule);
+
             logFileOperation.saveActionLogDetail(logFileWrapper);
             if (!StringUtils.hasText(logFileWrapper.getNote())) {
-                logFileWrapper.setNote("have not operation. ");
+                logFileWrapper.setNote("saving action log detail is not excuting. ");
             }
             actionLogSchedule.setNote(actionLogSchedule.getNote() + logFileWrapper.getNote());
             scheduleService.update(actionLogSchedule);
