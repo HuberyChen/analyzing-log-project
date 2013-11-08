@@ -58,17 +58,11 @@ public class AnalyzingLogSiteController extends SiteController {
         List<InstanceDetail> instanceDetails = new ArrayList<>();
         for (Project project : projects) {
             InstanceDetail instanceDetail = new InstanceDetail();
-            instanceDetail.setProjectName(project.getName());
-            instanceDetail.setProjectId(project.getId());
+            instanceDetail.setProject(project);
 
             List<Server> servers = serverService.getServersByProjectId(project.getId());
-            if (CollectionUtils.isEmpty(servers)) {
-                instanceDetail.getServers().add("null");
-            } else {
-                for (Server server : servers) {
-                    instanceDetail.getServers().add(server.getServerName());
-                }
-            }
+            instanceDetail.getServers().addAll(servers);
+
             instanceDetails.add(instanceDetail);
         }
         model.put("instanceDetails", instanceDetails);

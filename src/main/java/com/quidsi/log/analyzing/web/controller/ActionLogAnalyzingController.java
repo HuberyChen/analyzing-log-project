@@ -74,69 +74,6 @@ public class ActionLogAnalyzingController extends RESTController {
         return map;
     }
 
-    @RequestMapping(value = "/project/project", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> scanProject() {
-        Map<String, Object> map = new HashMap<>();
-        List<String> projectsNotExisted = scanService.scanProject(path);
-        map.put("projectsNotExisted", projectsNotExisted);
-        return map;
-    }
-
-    @RequestMapping(value = "/instance/server", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> scanServer() {
-        Map<String, Object> map = new HashMap<>();
-        List<InstanceDetail> serversNotExisted = new ArrayList<>();
-        List<Project> projects = projectService.getProjects();
-        if (CollectionUtils.isEmpty(projects)) {
-            map.put("serversNotExisted", null);
-            return map;
-        }
-        for (Project project : projects) {
-            List<String> servers = scanService.scanServer(path, project.getName());
-            if (CollectionUtils.isEmpty(servers)) {
-                continue;
-            }
-            InstanceDetail instanceDetail = new InstanceDetail();
-            instanceDetail.setProjectId(project.getId());
-            instanceDetail.setProjectName(project.getName());
-            instanceDetail.getServers().addAll(servers);
-            serversNotExisted.add(instanceDetail);
-        }
-        map.put("serversNotExisted", serversNotExisted);
-        return map;
-    }
-
-    @RequestMapping(value = "/project/generate", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> generateProject(@Valid @RequestParam String projectName) {
-        Map<String, Object> map = new HashMap<>();
-        Project project = new Project();
-        project.setName(projectName);
-        if (0 == projectService.save(project)) {
-            map.put("status", "failure");
-            return map;
-        }
-        map.put("status", "success");
-        return map;
-    }
-
-    @RequestMapping(value = "/server/generate", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> generateServer(@Valid @RequestParam int projectId, @Valid @RequestParam String serverName) {
-        Map<String, Object> map = new HashMap<>();
-        Server server = new Server();
-        server.setProjectId(projectId);
-        server.setServerName(serverName);
-        if (0 == serverService.save(server)) {
-            map.put("status", "failure");
-            return map;
-        }
-        map.put("status", "success");
-        return map;
-    }
-
     @RequestMapping(value = "/project/instance", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, List<Server>> findServerByProject(@Valid @RequestParam String projectName) {
@@ -146,6 +83,77 @@ public class ActionLogAnalyzingController extends RESTController {
         Map<String, List<Server>> map = new HashMap<>();
         map.put("servers", servers);
         return map;
+    }
+
+    @RequestMapping(value = "/scan", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> scanProjectAndServer() {
+        Map<String, Object> map = new HashMap<>();
+        List<String> projectsAll = scanService.scanProject(path);
+        List<InstanceDetail> detailNotExisted = new ArrayList<>();
+        if (CollectionUtils.isEmpty(projectsAll)) {
+            map.put("errMsg", "There is not project.");
+            return map;
+        }
+        for (String projectName : projectsAll) {
+            InstanceDetail instanceDetail = new InstanceDetail();
+            Project project = projectService.getProjectByName(projectName);
+            if (null == project) {
+                projectNullCondition(projectName, instanceDetail, detailNotExisted);
+                continue;
+            }
+            projectNotNullCondition(project, instanceDetail, detailNotExisted);
+        }
+        map.put("detailNotExisted", detailNotExisted);
+        return map;
+    }
+
+    private void projectNotNullCondition(Project project, InstanceDetail instanceDetail, List<InstanceDetail> detailNotExisted) {
+        instanceDetail.setProject(project);
+        List<Server> servers = scanServer(project);
+        if (!CollectionUtils.isEmpty(servers)) {
+            instanceDetail.getServers().addAll(servers);
+            detailNotExisted.add(instanceDetail);
+        }
+    }
+
+    private void projectNullCondition(String projectName, InstanceDetail instanceDetail, List<InstanceDetail> detailNotExisted) {
+        Project project = generateProject(projectName);
+        instanceDetail.setProject(project);
+        List<Server> servers = scanServer(project);
+        if (!CollectionUtils.isEmpty(servers)) {
+            instanceDetail.getServers().addAll(servers);
+        }
+        detailNotExisted.add(instanceDetail);
+    }
+
+    private List<Server> scanServer(Project project) {
+        List<String> serversAll = scanService.scanServer(path, project.getName());
+        List<Server> serversNotExisted = new ArrayList<>();
+        if (CollectionUtils.isEmpty(serversAll)) {
+            return null;
+        }
+        for (String serverName : serversAll) {
+            Server server = serverService.getServerByProjectIdAndServerName(project.getId(), serverName);
+            if (null != server) {
+                continue;
+            }
+            serversNotExisted.add(generateServer(serverName, project.getId()));
+        }
+        return serversNotExisted;
+    }
+
+    private Server generateServer(String serverName, int projectId) {
+        Server server = new Server();
+        server.setProjectId(projectId);
+        server.setServerName(serverName);
+        return server;
+    }
+
+    private Project generateProject(String projectName) {
+        Project project = new Project();
+        project.setName(projectName);
+        return project;
     }
 
     private ActionLogSchedule dataConverToSchedule(ActionLogAnalyzingRequest request) {
