@@ -93,6 +93,7 @@ public class ActionLogAnalyzingController extends RESTController {
         List<InstanceDetail> detailNotExisted = new ArrayList<>();
         if (CollectionUtils.isEmpty(projectsAll)) {
             map.put("errMsg", "There is not project.");
+            map.put("detailNotExisted", detailNotExisted);
             return map;
         }
         for (String projectName : projectsAll) {
@@ -104,7 +105,34 @@ public class ActionLogAnalyzingController extends RESTController {
             }
             projectNotNullCondition(project, instanceDetail, detailNotExisted);
         }
+        map.put("errMsg", "Scan success.");
         map.put("detailNotExisted", detailNotExisted);
+        return map;
+    }
+
+    @RequestMapping(value = "/generation", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> generate(@Valid @RequestParam String projectName, @Valid @RequestParam String serverName) {
+        Map<String, Object> map = new HashMap<>();
+        Project project = projectService.getProjectByName(projectName);
+
+        if (null == project) {
+            int projectId = projectService.save(generateProject(projectName));
+            serverService.save(generateServer(serverName, projectId));
+            map.put("status", "SUCCESS");
+            return map;
+        }
+
+        Server server = serverService.getServerByProjectIdAndServerName(project.getId(), serverName);
+
+        if (null != server) {
+            map.put("status", "FAILURE");
+            return map;
+        }
+
+        serverService.save(generateServer(serverName, project.getId()));
+
+        map.put("status", "SUCCESS");
         return map;
     }
 

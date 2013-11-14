@@ -3,7 +3,7 @@
 <head>
 	<title>Quidsi, Inc. |Log Analyzing</title>
     <meta charset="utf-8"/>
-    <@css href="home.css" rel="stylesheet" type="text/css"/> 
+    <@css href="foundation.min.css" rel="stylesheet" type="text/css"/>
     <@js src="jquery.min.js"/>
 </head>
 <body>
@@ -27,6 +27,8 @@
 						<th>Start date</th>
 						<th>End date</th>
 						<th>Effective start time</th>
+                        <th>Status</th>
+                        <th>Detail</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -38,6 +40,8 @@
 								<td>${schedule.startDate}</td>
 								<td>${schedule.endDate}</td>
 								<td>${schedule.effectiveStartTime}</td>
+								<td>${schedule.status}</td>
+								<td><a href="<@url value='/schedule/detail?scheduleId='/>${schedule.id}">detail</a></td>
 							</tr>
 						</#list>
 					</#if>

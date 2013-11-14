@@ -29,13 +29,18 @@ public class ScheduleService {
         return scheduleDao.getSchedulesRunning();
     }
 
+    public List<ActionLogSchedule> getSchedulesIntraday() {
+        return scheduleDao.getSchedulesIntraday();
+    }
+
     public ActionLogSchedule getScheduleRunning(String project, String instance) {
         return scheduleDao.getScheduleRunning(project, instance);
     }
 
-    public List<ActionLogSchedule> getSchedules() {
-        return scheduleDao.getSchedules();
+    public ActionLogSchedule getScheduleById(int id) {
+        return scheduleDao.getScheduleById(id);
     }
+
 
     @Inject
     public void setScheduleDao(ScheduleDao scheduleDao) {

@@ -6,6 +6,11 @@
     <packaging>war</packaging>
   
    <properties>
+        <jetty.context>/analyzing-log-project</jetty.context>
+        <jetty.http.port>8081</jetty.http.port>
+        <jetty.https.port>8443</jetty.https.port>
+        <jetty.stopPort>9080</jetty.stopPort>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetJDK>1.7</project.build.targetJDK>
 
@@ -152,6 +157,30 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.5.v20120716</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>${jetty.context}</contextPath>
+                    </webApp>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>${jetty.http.port}</port>
+                        </connector>
+                        <connector implementation="org.eclipse.jetty.server.ssl.SslSocketConnector">
+                            <port>${jetty.https.port}</port>
+                            <keystore>build/jetty.keystore.jks</keystore>
+                            <keyPassword>password</keyPassword>
+                            <password>password</password>
+                        </connector>
+                    </connectors>
+                    <stopKey>jetty</stopKey>
+                    <stopPort>${jetty.stopPort}</stopPort>
+                </configuration>
             </plugin>
 
             <plugin>

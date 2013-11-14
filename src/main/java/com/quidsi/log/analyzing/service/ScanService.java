@@ -35,9 +35,8 @@ public class ScanService {
     public List<String> scanServer(String root, String projectName) {
         Project project = projectService.getProjectByName(projectName);
         if (null == project) {
-            throw new IllegalStateException("Project is not existed.");
+            return ScanUtils.scanSecondaryDirectoryFileName(root, projectName);
         }
-
         List<String> serversAll = ScanUtils.scanSecondaryDirectoryFileName(root, projectName);
         List<String> serversNotExisted = new ArrayList<>();
         if (CollectionUtils.isEmpty(serversAll)) {

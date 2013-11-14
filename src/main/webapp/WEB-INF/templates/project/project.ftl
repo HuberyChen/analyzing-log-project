@@ -3,12 +3,8 @@
 <head>
 	<title>Quidsi, Inc. |Log Analyzing</title>
     <meta charset="utf-8"/>
-    <@css href="home.css" rel="stylesheet" type="text/css"/> 
+    <@css href="foundation.min.css" rel="stylesheet" type="text/css"/>
     <@js src="jquery.min.js"/>
-    <@js src="foundation/foundation.js"/>
-	<@js src="foundation/foundation.reveal.js"/>
-	<@js src="foundation/foundation.topbar.js"/>
-	<@js src="foundation/foundation.forms.js"/>
 </head>
 <body>
 
@@ -22,15 +18,17 @@
 	</nav>
 	
 	<div class="row">
-		<div class="large-12 columns">
-			<div><a class="small radius button" onclick="scan()">Scan</a>
-			</div>
+		<div class="large-12 columns" id="info">
+			<a class="small radius button" id="scan" onclick="scan()">Scan</a>
+            <p id="addSuccessInfo" style="display: none">Save successfully!</p> 
+            <p id="errInfo" style="display: none">Save error! Server is existed.</p>
 			<table class="business-rules" style="width:100%" id="projectDisplayTable" name="projectDisplayTable">
 				<thead>
 					<tr>
 						<th>Project Id</th>
 						<th>Project Name</th>
 						<th>Instance</th>
+						<th>Operation</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -42,14 +40,58 @@
 										<td>${instanceDetail.project.id}</td>
 										<td>${instanceDetail.project.name}</td>
 										<td>${server.serverName}</td>
+										<td></td>
 									</tr>
 								</#list>
 							</#if>
 						</#list>
 					</#if>
+					<tr id="input"></tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
 </body>
+<script type="text/javascript">
+function scan(){
+	$.ajax({
+		type : "POST",
+		url : "<@url value='/scan'/>",
+		success : function(result) {
+			var detailNotExisted = result.detailNotExisted;
+			var errMsg = result.errMsg;
+            $("#errMsg").remove();
+			var input="<p id=\"errMsg\" style=>" + errMsg + "</p>";
+			$(input).insertAfter($("#scan"));
+			if (0 != detailNotExisted.length && null != detailNotExisted){
+				for (var i=0; i < detailNotExisted.length; i++) {
+					for (var j=0; j < detailNotExisted[i].servers.length; j++) {
+						var input="<tr><td name = \"projectId\">" + detailNotExisted[i].project.id +"</td><td name = \"projectName\">" + detailNotExisted[i].project.name +"</td><td name = \"serverName\">" + detailNotExisted[i].servers[j].serverName +"</td><td><a onclick=\"generate(this) \">add</a></td></tr>";
+						$(input).insertAfter($("#input").siblings().last());
+					};
+				};
+			}
+		}
+	}); 
+}
+
+function generate(obj){
+	var projectName = $(obj).parent().parent().find("td[name='projectName']").text();
+	var serverName = $(obj).parent().parent().find("td[name='serverName']").text();
+	$("#errMsg").remove();
+	$.ajax({
+		type : "POST",
+		url : "<@url value='/generation'/>",
+		data : "projectName=" + projectName + "&serverName=" + serverName, 
+		success : function(result) {
+			if("SUCCESS" == result.status){
+				$("#addSuccessInfo").show();
+				$(obj).parent().parent().find("a").remove();
+			}else{
+				$("#errInfo").show();
+			}
+		}
+	});
+}
+</script>
 </html>

@@ -4,7 +4,8 @@ CREATE TABLE Schedule (
 	EndDate VARCHAR(20) NOT NULL ,
 	Project VARCHAR(30) NOT NULL ,
 	Instance VARCHAR(30) NOT NULL ,
-	EffectiveStartTime DATETIME NOT NULL ,
+	EffectiveStartTime DATETIME NULL ,
 	EffectiveEndTime DATETIME NULL ,
 	[Status] VARCHAR(10) NOT NULL ,
+	Note VARCHAR(max) NULL ,
 )

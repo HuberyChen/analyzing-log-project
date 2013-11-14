@@ -50,7 +50,9 @@ public class LogFilesLoader {
         }
 
         for (String date : dateList) {
-            List<LogFile> allFiles = getFileWrapperAllFile(project, server, date, path);
+            List<LogFile> allFiles = new ArrayList<>();
+
+            getFileWrapperAllFile(project, server, date, path, allFiles);
 
             if (!CollectionUtils.isEmpty(allFiles)) {
                 logFileWrapper.getAllLogFiles().addAll(allFiles);
@@ -71,7 +73,7 @@ public class LogFilesLoader {
         return logFileWrapper;
     }
 
-    private List<LogFile> getFileWrapperAllFile(Project project, Server server, String date, String path) {
+    private List<LogFile> getFileWrapperAllFile(Project project, Server server, String date, String path, List<LogFile> allFiles) {
         StopWatch watch = new StopWatch();
         logger.info("scan log path={}", path);
         Map<String, List<String>> filterMap = logFileService.initializeFilters(project.getName(), server.getServerName(), date);
@@ -80,18 +82,17 @@ public class LogFilesLoader {
             return null;
         }
         logger.info("scan log elapsedTime={}, log number={}", watch.elapsedTime(), logPaths.size());
-        return mapConverToList(generateLogFiles(logPaths, project, server));
+        return mapConverToList(generateLogFiles(logPaths, project, server), allFiles);
     }
 
-    private List<LogFile> mapConverToList(Map<String, LogFile> map) {
-        List<LogFile> list = new ArrayList<>();
+    private List<LogFile> mapConverToList(Map<String, LogFile> map, List<LogFile> allFiles) {
         if (CollectionUtils.isEmpty(map)) {
             return null;
         }
         for (Entry<String, LogFile> entry : map.entrySet()) {
-            list.add(entry.getValue());
+            allFiles.add(entry.getValue());
         }
-        return list;
+        return allFiles;
     }
 
     private Map<String, LogFile> generateLogFiles(List<String> logPaths, Project project, Server server) {

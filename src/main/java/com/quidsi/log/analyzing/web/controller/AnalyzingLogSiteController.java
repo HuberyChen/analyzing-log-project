@@ -16,8 +16,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +43,17 @@ public class AnalyzingLogSiteController extends SiteController {
     }
 
     @RequestMapping(value = "/schedule/details", method = RequestMethod.GET)
-    public String scheduletDetails(Map<String, Object> model) {
-
-        List<ActionLogSchedule> schedules = scheduleService.getSchedulesRunning();
+    public String scheduleDetails(Map<String, Object> model) {
+        List<ActionLogSchedule> schedules = scheduleService.getSchedulesIntraday();
         model.put("schedules", schedules);
         return "schedule/schedule";
+    }
+
+    @RequestMapping(value = "/schedule/detail", method = RequestMethod.GET)
+    public String scheduleDetail(@Valid @RequestParam int scheduleId, Map<String, Object> model) {
+        ActionLogSchedule schedule = scheduleService.getScheduleById(scheduleId);
+        model.put("messages", schedule.getNote().replace(".", "\n"));
+        return "schedule/detail";
     }
 
     @RequestMapping(value = "/project/instance/details", method = RequestMethod.GET)
