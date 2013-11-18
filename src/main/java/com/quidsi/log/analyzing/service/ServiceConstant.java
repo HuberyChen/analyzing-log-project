@@ -10,4 +10,5 @@ public class ServiceConstant {
     public static final String MATCH_ALL = "[\\S\\|\\s]*";
     public static final String PATHFILTERS = "pathFilters";
     public static final String NAMEFILTERS = "nameFilters";
+    public static final int DEFAULTFETCHSIZE = 50;
 }

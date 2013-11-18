@@ -2,13 +2,11 @@ package com.quidsi.log.analyzing.service;
 
 import com.quidsi.log.analyzing.dao.LogFileDao;
 import com.quidsi.log.analyzing.domain.LogFile;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,12 +38,16 @@ public class LogFileService {
         logFileDao.update(logFile);
     }
 
+    public List<LogFile> getLogFilesByProjectAndServer(String project, String server) {
+        return logFileDao.getLogFilesByProjectAndInstance(project, server);
+    }
+
     public List<LogFile> getLogFilesByFuzzyName(String date, String project, String server) {
         return logFileDao.getLogFilesByFuzzyName(date, project, server);
     }
 
     public List<LogFile> getLogFilesByType(String logType) {
-        return logFileDao.getLogFileByLogType(logType);
+        return logFileDao.getLogFilesByLogType(logType);
     }
 
     public LogFile getLogFileByName(String logName, String project, String server) {

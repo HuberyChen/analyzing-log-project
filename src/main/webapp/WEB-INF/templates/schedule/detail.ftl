@@ -3,7 +3,7 @@
 <head>
     <title>Quidsi, Inc. |Log Analyzing</title>
     <meta charset="utf-8"/>
-    <@css href="home.css" rel="stylesheet" type="text/css"/>
+    <@css href="foundation.min.css" rel="stylesheet" type="text/css"/>
     <@js src="jquery.min.js"/>
 </head>
 <body>

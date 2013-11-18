@@ -2,11 +2,9 @@ package com.quidsi.log.analyzing.dao;
 
 import com.quidsi.core.database.JPAAccess;
 import com.quidsi.log.analyzing.domain.LogFile;
-
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +42,20 @@ public class LogFileDao {
         return jpaAccess.find(sql.toString(), params);
     }
 
-    public List<LogFile> getLogFileByLogType(String logType) {
+    public List<LogFile> getLogFilesByLogType(String logType) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("LogType", logType);
         sql.append("from ").append(LogFile.class.getName()).append(" where LogType = :LogType");
+        return jpaAccess.find(sql.toString(), params);
+    }
+
+    public List<LogFile> getLogFilesByProjectAndInstance(String project, String server) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        params.put("Project", project);
+        params.put("Server", server);
+        sql.append("from ").append(LogFile.class.getName()).append(" where project =:Project and instance =:Server");
         return jpaAccess.find(sql.toString(), params);
     }
 
