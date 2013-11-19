@@ -55,6 +55,13 @@ public class ActionLogAnalyzingController extends RESTController {
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
 
+    @RequestMapping(value = "/project/instance/log/action/fuzzy", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> actionDetailFuzzySearch(@Valid @RequestParam List<Integer> logIdList, @Valid @RequestParam String fuzzyMessage) {
+        Map<String, Object> map = new HashMap<>();
+        return map;
+    }
+
     @RequestMapping(value = "/project/instance/log/action/change", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> actionDetailPageManagement(@Valid @RequestParam List<Integer> logIdList, @Valid @RequestParam int offset) {
