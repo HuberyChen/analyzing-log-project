@@ -8,14 +8,13 @@ import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.utils.ScanUtils;
-
+import com.quidsi.log.analyzing.utils.TimeConvertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +40,8 @@ public class LogFilesLoader {
         Project project = logFileWrapper.getProject();
         Server server = logFileWrapper.getServer();
         String path = logFileWrapper.getPath();
-        List<String> dateList = logFileWrapper.getDateRange();
+
+        List<String> dateList = TimeConvertUtil.getDateRange(logFileWrapper.getStartDate(), logFileWrapper.getEndDate());
 
         if (CollectionUtils.isEmpty(dateList)) {
             String errMsg = "Date is null.";
@@ -82,10 +82,10 @@ public class LogFilesLoader {
             return null;
         }
         logger.info("scan log elapsedTime={}, log number={}", watch.elapsedTime(), logPaths.size());
-        return mapConverToList(generateLogFiles(logPaths, project, server), allFiles);
+        return mapConvertToList(generateLogFiles(logPaths, project, server), allFiles);
     }
 
-    private List<LogFile> mapConverToList(Map<String, LogFile> map, List<LogFile> allFiles) {
+    private List<LogFile> mapConvertToList(Map<String, LogFile> map, List<LogFile> allFiles) {
         if (CollectionUtils.isEmpty(map)) {
             return null;
         }

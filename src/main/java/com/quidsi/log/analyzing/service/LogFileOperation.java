@@ -5,13 +5,11 @@ import com.quidsi.log.analyzing.domain.ActionLogSchedule;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.utils.FileFactory;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,14 +46,14 @@ public class LogFileOperation {
     @Transactional
     public LogFileWrapper decompression(LogFileWrapper logFileWrapper) {
         List<LogFile> actionLogFilesHistories = logFileWrapper.getLogFilesHistories();
-        List<LogFile> uncompressionActionLogs = new ArrayList<>();
+        List<LogFile> unCompressionActionLogs = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(actionLogFilesHistories)) {
             return logFileWrapper;
         }
         for (LogFile logFile : actionLogFilesHistories) {
             if (logFile.getIsDecomposed().equals(LogFile.IsDecomposed.N) && logFile.getLogType().equals(ServiceConstant.LOG_TYPE_ACTION)) {
-                uncompressionActionLogs.add(logFile);
+                unCompressionActionLogs.add(logFile);
                 String absolutePath = FileFactory.unGz(new File(logFile.getAbsolutePath()));
                 if (!StringUtils.hasText(absolutePath)) {
                     throw new IllegalStateException("Log is decomposed");
@@ -67,7 +65,7 @@ public class LogFileOperation {
         }
 
         ActionLogSchedule actionLogSchedule = logFileWrapper.getActionLogSchedule();
-        actionLogSchedule.setNote(actionLogSchedule.getNote() + "decompression log is success, log number = " + uncompressionActionLogs.size() + ". ");
+        actionLogSchedule.setNote(actionLogSchedule.getNote() + "decompression log is success, log number = " + unCompressionActionLogs.size() + ". ");
         scheduleService.update(actionLogSchedule);
         return logFileWrapper;
 

@@ -75,11 +75,16 @@ public class ActionLogAnalyzingController extends RESTController {
     @ResponseBody
     public Map<String, Object> actionDetailManagement(@Valid @RequestBody DetailShowRequest request) {
         Map<String, Object> map = new HashMap<>();
-        List<LogFile> logFiles = logFileService.getLogFilesByFuzzyName(TimeConvertUtil.formatDate(TimeConvertUtil.stringConvertToDate(request.getDate())), request.getProject(), request.getServerName());
+        List<String> dateList = TimeConvertUtil.getDateRange(request.getStartDate(), request.getEndDate());
+        List<LogFile> logFiles = new ArrayList<>();
 
-        if (CollectionUtils.isEmpty(logFiles)) {
+        if (CollectionUtils.isEmpty(dateList)) {
             map.put("actionLogDetails", null);
             return map;
+        }
+
+        for (String date : dateList) {
+            logFiles.addAll(logFileService.getLogFilesByFuzzyName(date, request.getProject(), request.getServerName()));
         }
 
         List<Integer> logIdList = new ArrayList<>();

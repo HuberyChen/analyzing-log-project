@@ -12,7 +12,8 @@
 </head>
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#date").datepicker();
+        $("#startDate").datepicker();
+        $("#endDate").datepicker();
         $("#projectList").change(function () {
             findServerByProject(this);
         });
@@ -22,8 +23,11 @@
         });
         $("#showDetailForm").validate({
             messages: {
-                date: {
-                    required: "Date is required."
+                startDate: {
+                    required: "start date is required."
+                },
+                endDate: {
+                    required: "end date is required."
                 }
             },
             errorPlacement: function (error) {
@@ -98,8 +102,15 @@
 
                 <div class="row">
                     <div class="large-12 large-centered columns">
-                        <div class="large-4 small-3 columns text-right"><label style="margin-top:10px;">Date:</label></div>
-                        <div class="large-8 small-9 columns"><input class="date left hasDatePicker required date" type="date" id="date" name="date"/></div>
+                        <div class="large-4 small-3 columns text-right"><label style="margin-top:10px;">Start date:</label></div>
+                        <div class="large-8 small-9 columns"><input class="date left hasDatePicker required date" type="date" id="startDate" name="startDate"/></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="large-12 large-centered columns">
+                        <div class="large-4 small-3 columns text-right"><label style="margin-top:10px;">End date:</label></div>
+                        <div class="large-8 small-9 columns"><input class="date left hasDatePicker required date" type="date" id="endDate" name="endDate"/></div>
                     </div>
                 </div>
 
@@ -146,9 +157,7 @@
         <th>LogAddress</th>
     </tr>
     </thead>
-    <tbody>
     <tbody id="detailList"></tbody>
-    </tbody>
 </table>
 <div class="row">
     <div class="large-12 column">

@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 @Component
 public class LogAnalyzedJobConfig implements InitializingBean {
 
-    private static final LogAnalyzedJobStatus DEFAULTJOBSTATUS = LogAnalyzedJobStatus.STOP;
+    private static final LogAnalyzedJobStatus DEFAULT_JOB_STATUS = LogAnalyzedJobStatus.STOP;
 
     private static Map<String, LogAnalyzedJobStatus> logAnalyzedJobStatusConfig = new HashMap<>();
 
@@ -53,7 +53,7 @@ public class LogAnalyzedJobConfig implements InitializingBean {
         if (logAnalyzedJobStatusConfig.isEmpty()) {
             Map<String, JobInfo> jobs = jobStatistic.getJobs();
             for (JobInfo info : jobs.values()) {
-                logAnalyzedJobStatusConfig.put(info.getJobId(), DEFAULTJOBSTATUS);
+                logAnalyzedJobStatusConfig.put(info.getJobId(), DEFAULT_JOB_STATUS);
             }
 
         }

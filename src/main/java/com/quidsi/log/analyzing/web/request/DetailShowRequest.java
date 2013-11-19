@@ -12,8 +12,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DetailShowRequest {
 
-    @XmlElement(name = "date")
-    private String date;
+    @XmlElement(name = "startDate")
+    private String startDate;
+
+    @XmlElement(name = "endDate")
+    private String endDate;
 
     @XmlElement(name = "project")
     private String project;
@@ -21,17 +24,24 @@ public class DetailShowRequest {
     @XmlElement(name = "instance")
     private String serverName;
 
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
 
     @XmlElement(name = "offset")
     private int offset;
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public String getProject() {
         return project;
