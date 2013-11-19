@@ -1,11 +1,10 @@
 package com.quidsi.log.analyzing.domain;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity(name = "Action_Log_Detail")
 public class ActionLogDetail {

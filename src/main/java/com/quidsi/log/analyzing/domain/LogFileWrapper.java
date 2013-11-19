@@ -1,9 +1,7 @@
 package com.quidsi.log.analyzing.domain;
 
-import com.quidsi.core.util.DateUtils;
-import com.quidsi.core.util.StringUtils;
+import com.quidsi.log.analyzing.utils.TimeConvertUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,34 +35,26 @@ public class LogFileWrapper {
 
     public List<String> getDateRange() {
         List<String> dates = new ArrayList<>();
-        Date start = stringConverToDate(startDate);
-        Date end = stringConverToDate(endDate);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        dates.add(sdf.format(start));
+        Date start = TimeConvertUtil.stringConvertToDate(startDate);
+        Date end = TimeConvertUtil.stringConvertToDate(endDate);
+        dates.add(TimeConvertUtil.formatDate(start));
         Calendar cal = Calendar.getInstance();
         cal.setTime(start);
         boolean bContinue = true;
         while (bContinue) {
             cal.add(Calendar.DAY_OF_MONTH, 1);
             if (end.after(cal.getTime())) {
-                dates.add(sdf.format(cal.getTime()));
+                dates.add(TimeConvertUtil.formatDate(cal.getTime()));
             } else {
                 break;
             }
         }
-        if (!sdf.format(start).equals(sdf.format(end))) {
-            dates.add(sdf.format(end));
+        if (!TimeConvertUtil.formatDate(start).equals(TimeConvertUtil.formatDate(end))) {
+            dates.add(TimeConvertUtil.formatDate(end));
         }
         return dates;
     }
 
-    private Date stringConverToDate(String date) {
-        if (!StringUtils.hasText(date)) {
-            return null;
-        }
-        String[] dateMessage = date.split("/");
-        return DateUtils.date(Integer.parseInt(dateMessage[2]), Integer.parseInt(dateMessage[0]) - 1, Integer.parseInt(dateMessage[1]));
-    }
 
     public Project getProject() {
         return project;

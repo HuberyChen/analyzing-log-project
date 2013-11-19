@@ -1,21 +1,23 @@
 package com.quidsi.log.analyzing.utils;
 
 import com.quidsi.core.util.DateUtils;
+import com.quidsi.core.util.StringUtils;
 
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class TimeConvertUtil {
-    private static final String EAST_TIMEZONE_DAY_LIGHT_SAVING = "America/New_York";
 
-    public static Date getCurrentEasternDate() {
-        Date now = Calendar.getInstance().getTime();
-        TimeZone fromTimeZone = DateUtils.calendar(now).getTimeZone();
-        TimeZone toTimeZone = TimeZone.getTimeZone(EAST_TIMEZONE_DAY_LIGHT_SAVING);
-        Date fromDate = DateUtils.toCurrentTimeZone(now, fromTimeZone);
-        int offset = toTimeZone.getRawOffset() + toTimeZone.getDSTSavings() - fromTimeZone.getRawOffset() - fromTimeZone.getDSTSavings();
-        return DateUtils.add(fromDate, Calendar.MILLISECOND, offset);
+    public static String formatDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
     }
 
+    public static Date stringConvertToDate(String date) {
+        if (!StringUtils.hasText(date)) {
+            return null;
+        }
+        String[] dateMessage = date.split("/");
+        return DateUtils.date(Integer.parseInt(dateMessage[2]), Integer.parseInt(dateMessage[0]) - 1, Integer.parseInt(dateMessage[1]));
+    }
 }

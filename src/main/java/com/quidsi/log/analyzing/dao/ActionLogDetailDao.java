@@ -2,12 +2,11 @@ package com.quidsi.log.analyzing.dao;
 
 import com.quidsi.core.database.JPAAccess;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
+import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,13 @@ public class ActionLogDetailDao {
         return record.getId();
     }
 
+    public List<ActionLogDetail> findList(List<Integer> logIdList, int offset) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        StringBuilder sql = new StringBuilder();
+        this.pagingConfig(params, sql, logIdList);
+        return jpaAccess.find(sql.toString(), params, offset, ServiceConstant.DEFAULTFETCHSIZE);
+    }
+
     public List<ActionLogDetail> getRecordsByLogId(int logId) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
@@ -30,11 +36,11 @@ public class ActionLogDetailDao {
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
-    public int getTotalCount(Date date, String status, int logId) {
+    public int getTotalCount(List<Integer> logIdList) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         sql.append("select count(Id) ");
-        this.pagingConfig(params, sql, date, status, logId);
+        this.pagingConfig(params, sql, logIdList);
         List<Long> result = jpaAccess.find(sql.toString(), params);
         if (CollectionUtils.isEmpty(result)) {
             return 0;
@@ -42,21 +48,17 @@ public class ActionLogDetailDao {
         return result.get(0).intValue();
     }
 
-    private void pagingConfig(Map<String, Object> params, StringBuilder sql, Date date, String status, int logId) {
-        params.put("startDate", date);
-        params.put("endDate", addDay(date));
-        params.put("status", status);
-        params.put("logId", logId);
-        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" where status = :status and  RecordTime > :startDate and RecordTime < :endDate and logId = :logId");
+    private void pagingConfig(Map<String, Object> params, StringBuilder sql, List<Integer> logIdList) {
+        sql.append(" from ").append(ActionLogDetail.class.getName());
+        if (!CollectionUtils.isEmpty(logIdList)) {
+            sql.append(" where logId in (");
+            for (Integer logId : logIdList) {
+                params.put("logId" + logId.toString(), logId);
+                sql.append(" :logId" + logId.toString() + ",");
+            }
+            sql.append(" null )");
+        }
     }
-
-    private Date addDay(Date date) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.DATE, 1);
-        return c.getTime();
-    }
-
 
     @Inject
     public void setJpaAccess(JPAAccess jpaAccess) {

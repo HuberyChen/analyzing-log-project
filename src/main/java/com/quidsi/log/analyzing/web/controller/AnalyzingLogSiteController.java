@@ -11,7 +11,6 @@ import com.quidsi.log.analyzing.service.ScheduleService;
 import com.quidsi.log.analyzing.service.ServerService;
 import com.quidsi.log.analyzing.web.interceptor.LoginRequired;
 import com.quidsi.log.analyzing.web.response.InstanceDetail;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +74,14 @@ public class AnalyzingLogSiteController extends SiteController {
         model.put("instanceDetails", instanceDetails);
         return "project/project";
     }
+
+    @RequestMapping(value = "/project/instance/log/action/detail", method = RequestMethod.GET)
+    public String actionLogDetail(Map<String, Object> model) {
+        List<Project> projects = projectService.getProjects();
+        model.put("projects", projects);
+        return "project/action/detail";
+    }
+
 
     @Inject
     public void setServerService(ServerService serverService) {

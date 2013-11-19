@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,8 +23,12 @@ public class ActionLogDetailService {
         }
     }
 
-    public int getTotalCount(Date date, String status, int logId) {
-        return actionLogDetailDao.getTotalCount(date, status, logId);
+    public List<ActionLogDetail> findDetail(List<Integer> logIdList, int offset) {
+        return actionLogDetailDao.findList(logIdList, offset);
+    }
+
+    public int getTotalCount(List<Integer> logIdList) {
+        return actionLogDetailDao.getTotalCount(logIdList);
     }
 
     public List<ActionLogDetail> getRecordsByLogId(int logId) {

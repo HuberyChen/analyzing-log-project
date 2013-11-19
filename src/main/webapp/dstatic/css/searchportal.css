@@ -1,0 +1,181 @@
+.row.full {
+	max-width:98%;
+}
+
+.accordian h5.subheader {border-bottom:2px solid #ccc;}
+.no-bullet dt {border-bottom:1px solid #eee;}
+
+.edit-rules-action {display:none;}
+
+.rule-preview {font-size:0.8em;}
+.rule-preview .title {font-size:1.25em !important;}
+.rule-preview .content {background:#FFE8B4 !important; padding: 0.438em !important;}
+.rule-preview dl, 
+.rule-preview ul  {background-color:#fff; border:1px solid #eee; padding:0.438em;}
+
+.top-info a{
+	color: white;
+	cursor: default;
+}
+p.edit-title{
+	margin-top: 2px;
+}
+/*hop up*/
+.reveal-modal{
+	width: 560px;
+	position: absolute;
+	top: 80px;
+	left: 50%;
+	margin-left: -280px;
+	border-radius: 8px;
+	padding-top: 20px;
+	padding-bottom: 0;
+
+}
+/*set error and seccess info*/
+#info{ 
+text-align: left; 
+margin-bottom: 0.8em; 
+} 
+.successBox{ 
+color:green;
+} 
+.errorBox{ 
+color:#FF0031;
+}
+/*label on the hopup*/
+label.right-label{
+	margin-top: 8px;
+}
+label b{
+	margin-left: 10px;
+	color: #09c;
+	font-weight: bold;
+}
+.button-group li{
+	margin-left: 15px;
+}
+/*input button on the hopup*/
+ul#button-box{
+	margin-top: 20px;
+}
+/*currently indexing*/
+#indexing{
+	width:200px;
+	margin:0 auto;
+	color:white
+}
+#indexing span{
+	float:left;
+}
+/*get rid of indexing as less max-width*/
+@media only screen and (max-width: 58.75em) {
+	#indexing{
+		display: none;}
+}
+/*the tips on the bottom of hopup*/
+p.tips{
+	margin-top: -0.8em;
+	background-color: gray;
+	color:white;
+	font-size: 0.8em;
+}
+/*set table style*/
+table.business-rules {
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+/*table th by sorting*/
+.table-header .th-link:hover,
+.table-header .th-link.th-over{
+	color:white;
+	background: #AAA;
+	cursor: pointer;
+}
+th{white-space: nowrap;}
+.th-length{
+	width: 400px;
+	word-break:break-all;
+}
+tbody tr.tr-error{
+	outline: 1px solid red;
+	background-color: rgba(225, 25, 19, 0.1) !important;
+}
+
+table.business-rules tbody tr:hover {background:#DBF1F7;}
+/*input on the td .input=priority*/
+td.input-priority{ 
+padding: 0; 
+} 
+tr:nth-of-type(2n+1) td.input-priority input[type="text"]{ 
+background: none repeat scroll 0 0 #FFFFFF; 
+} 
+tr:nth-of-type(2n) td.input-priority input[type="text"]{ 
+background: none repeat scroll 0 0 #F9F9F9; 
+} 
+tr:hover td.input-priority input[type="text"].uneditable{ 
+background:#DBF1F7; 
+} 
+/*input text on the td*/
+td input[type="text"]{ 
+  margin:0; 
+  padding: 0 0.5em; 
+  } 
+td.input-priority input[type="text"]{
+	width: 60px; 
+ }
+/*input is editable*/ 
+input[type="text"].editable{ 
+text-align:left; 
+padding: 0 0.8em; 
+} 
+td.input-priority input[type="text"].editable:hover{ 
+background: white; 
+} 
+/*input is uneditable and get rid of some style*/ 
+input[type="text"].uneditable{ 
+box-shadow: none; 
+border: 0; 
+background: none;
+}
+/*checkbox on teh th and td*/
+th input[type="checkbox"],
+td input[type="checkbox"]{
+	margin: 0;
+}
+/*achor on the td */
+td a:hover{
+	text-decoration: underline;
+}
+/*the achor to delete*/
+.to-delete{
+		margin-top: 8px;
+}
+.to-delete a:hover{
+	text-decoration: underline;
+}
+/*confirm delete (yes or no)*/
+.reveal-modal.yes-or-no{
+	top:7.25em;
+	padding:1.875em 0 0.8em;
+	width: 500px;
+	margin-left: -250px;
+}
+/*range page table*/
+.table-none{
+	border: none;
+}
+.table-none thead{
+	background: none;
+}
+.table-none tbody tr:nth-of-type(2n){
+	background: none;
+}
+.table-none tr td input[type="text"]{
+	margin: 0 auto;
+	text-align: center;
+}
+/*preview */
+#Redirection dl dd{
+	word-break:break-all;
+}

@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
 
 /**
  * @author hubery.chen
@@ -14,7 +13,7 @@ import java.util.Date;
 public class DetailShowRequest {
 
     @XmlElement(name = "date")
-    private Date date;
+    private String date;
 
     @XmlElement(name = "project")
     private String project;
@@ -22,14 +21,15 @@ public class DetailShowRequest {
     @XmlElement(name = "instance")
     private String serverName;
 
-    @XmlElement(name = "status")
-    private String status;
 
-    public Date getDate() {
+    @XmlElement(name = "offset")
+    private int offset;
+
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -49,11 +49,11 @@ public class DetailShowRequest {
         this.serverName = serverName;
     }
 
-    public String getStatus() {
-        return status;
+    public int getOffset() {
+        return offset;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 }

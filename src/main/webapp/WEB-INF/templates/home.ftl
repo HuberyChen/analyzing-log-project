@@ -14,7 +14,7 @@
     $(document).ready(function () {
         $("#startDate").datepicker();
         $("#endDate").datepicker();
-        $("#projectList").change(function(){
+        $("#projectList").change(function () {
             findServerByProject(this);
         });
         $("#analyzingLogForm").validate({
@@ -53,6 +53,9 @@
     </ul>
     <ul class="right">
         <li class="has-form"><a class="small radius button" href="<@url value='/schedule/details'/>">Schedule</a></li>
+    </ul>
+    <ul class="right">
+        <li class="has-form"><a class="small radius button" href="<@url value='/project/instance/log/action/detail'/>">Log Detail</a></li>
     </ul>
 </nav>
 
@@ -101,10 +104,12 @@
                 </div>
             </div>
             <div class="row">
-                <div class="large-12 large-centered columns"><p class="clearfix">
-                    <input style="margin-left: 180px;margin-top: -10px;" id="button" type="button" onclick="analyzingLog()" value="confirm"/>
-                    <span class="loadingDiv displayNone" id="loadingLogo"></span>
-                </p></div>
+                <div class="large-12 large-centered columns">
+                    <p>
+                        <input style="margin-left: 180px;margin-top: -10px;" id="button" type="button" onclick="analyzingLog()" value="confirm"/>
+                        <span class="loadingDiv displayNone" id="loadingLogo"></span>
+                    </p>
+                </div>
             </div>
         </form>
     </div>
