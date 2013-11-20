@@ -170,19 +170,18 @@
     </div>
     <div class="large-5 column right">
         <div class="row collapse">
+            <div class="small-3 columns">
+                <h6>Select Condition:</h6>
+            </div>
             <form id="searchForm" action="<@url value='/project/instance/log/action/search/show'/>" method="post">
-                <div class="small-3 columns">
-                    <select id="status" name="status">
-                        <option>ERROR</option>
-                        <option>SUCCESS</option>
-                        <option>WARNING</option>
-                    </select>
+                <div class="small-2 columns" style="padding-right: 10px;">
+                    <input id="status" type="text" name="status" placeholder="status">
                 </div>
-                <div class="small-5 columns">
-                    <input id="interface" type="text" value="" name="interface">
+                <div class="small-3 columns" style="padding-right: 10px;">
+                    <input id="interface" type="text" value="" name="interface" placeholder="interface">
                 </div>
-                <div class="small-2 columns">
-                    <input id="errorCode" type="text" name="errorCode">
+                <div class="small-2 columns" style="padding-right: 10px;">
+                    <input id="errorCode" type="text" name="errorCode" placeholder="errorCode">
                 </div>
                 <div class="small-2 columns">
                     <a class="small radius button" id="search" onclick="conditionSearch()" href="javascript:void(0)">Search</a>
