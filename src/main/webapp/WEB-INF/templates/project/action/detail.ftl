@@ -11,6 +11,7 @@
     <@js src="foundation/foundation.forms.js"/>
 </head>
 <script type="text/javascript">
+    golbalRootUrl = "<@url value='/' />";
     $(document).ready(function () {
         $("#startDate").datepicker();
         $("#endDate").datepicker();
@@ -54,6 +55,18 @@
         <li class="has-form"><a class="small radius button" href="<@url value='/signOut'/>">Logout</a></li>
     </ul>
 </nav>
+
+<!-- wait hop up-->
+<div id="wait-reveal" class="reveal-modal" style="height: 150px;">
+    <div class="row">
+        <div class="large-12 large-centered columns">
+            <h2>Please wait a moment!</h2>
+        </div>
+        <div class="large-2 large-centered columns">
+            <div class="loadingDiv"></div>
+        </div>
+    </div>
+</div>
 
 <!-- search detail hop up -->
 <div id="search-details-reveal" class="reveal-modal">
@@ -119,9 +132,10 @@
                 <div class="row">
                     <div class="large-12 large-centered columns">
                         <p>
-                            <input style="margin-left: 180px;margin-top: -10px;" id="button" type="button" onclick="detailShow()" value="confirm"/>
+                            <input style="margin-left: 180px;" class="small radius button" id="button" type="button" onclick="detailShow()" value="confirm"/>
                         </p>
-                        <span class="loadingDiv displayNone" id="loadingLogo"></span>
+
+                        <div class="loadingDiv displayNone" id="loadingLogo"></div>
                     </div>
                 </div>
 
@@ -131,15 +145,49 @@
     <a class="close-reveal-modal">&#215;</a>
 </div>
 
-<div class="row right">
-    <div class="large-5 column right">
+<div class="row full page-title">
+    <div class="large-7 column left">
         <div class="row collapse">
-            <div class="small-10 columns">
-                <input id="fuzzy" type="text" value="" name="fuzzy" placeholder="fuzzy select">
+            <div class="small-2 columns">
+                <h6>Select Range:</h6>
             </div>
             <div class="small-2 columns">
-                <a class="small radius button" id="search" onclick="search()">Search</a>
+                <input style="border:0px;box-shadow:none;" type="text" readonly id="project">
             </div>
+            <div class="small-2 columns">
+                <input style="border:0px;box-shadow:none;" type="text" readonly id="instance">
+            </div>
+            <div class="small-2 columns">
+                <input style="border:0px;box-shadow:none;" type="text" readonly id="start">
+            </div>
+            <div class="small-2 columns">
+                <input style="border:0px;box-shadow:none;" type="text" readonly id="end">
+            </div>
+            <div class="small-2 columns">
+                <a class="small radius button" id="changeRange" onclick="openDetailShow()" href="javascript:void(0)">Change Range</a>
+            </div>
+        </div>
+    </div>
+    <div class="large-5 column right">
+        <div class="row collapse">
+            <form id="searchForm" action="<@url value='/project/instance/log/action/search/show'/>" method="post">
+                <div class="small-3 columns">
+                    <select id="status" name="status">
+                        <option>ERROR</option>
+                        <option>SUCCESS</option>
+                        <option>WARNING</option>
+                    </select>
+                </div>
+                <div class="small-5 columns">
+                    <input id="interface" type="text" value="" name="interface">
+                </div>
+                <div class="small-2 columns">
+                    <input id="errorCode" type="text" name="errorCode">
+                </div>
+                <div class="small-2 columns">
+                    <a class="small radius button" id="search" onclick="conditionSearch()" href="javascript:void(0)">Search</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -164,95 +212,50 @@
         <div class="pagination-centered">
             <ul id="pageMessage" class="pagination">
             </ul>
+            <ul id="conditionPageMessage" class="pagination">
+            </ul>
         </div>
     </div>
 </div>
 
 
 </body>
+<@js src="detail.show.page.operation.js"/>
+<@js src="condition.detail.show.page.operation.js"/>
 <script type="text/javascript">
 
     var logIdList;
+
+    function openDetailShow() {
+        $('div#search-details-reveal').foundation('reveal', 'open');
+    }
 
     function detailShow() {
         if (!$("#showDetailForm").valid()) {
             return false;
         }
 
+        $("#loadingLogo").css("display", "inline-block");
+        $("#button").attr("disabled", true);
+
         $("#showDetailForm").ajaxSubmit({callback: function (result) {
+            $('#loadingLogo').css("display", "none");
+            $("#button").attr("disabled", false);
+            $("#project").attr("value", $("#projectList option:selected").text());
+            $("#instance").attr("value", $("#serverList option:selected").text());
+            $("#start").attr("value", $("#startDate").val());
+            $("#end").attr("value", $("#endDate").val());
             $('div#search-details-reveal').foundation('reveal', 'close');
-            successOperation(result);
+            detailShowSuccessOperation(result);
         }, validate: false});
     }
 
-    function successOperation(result) {
-        logIdList = result.logIdList;
-        var detailList = result.actionLogDetails;
-        if (null != detailList && 0 != detailList.length) {
-            $("#detailList").text('');
-            for (var i = 0; i < detailList.length; i++) {
-                var detail = detailList[i];
-                var str = "<tr>";
-                str += "<th>" + detail.recordTime + "</th>";
-                str += "<th>" + detail.status + "</th>";
-                str += "<th>" + detail.interfaceName + "</th>";
-                str += "<th>" + detail.elapsedTime + "</th>";
-                str += "<th>" + detail.requestMethod + "</th>";
-                str += "<th>" + detail.errorCode + "</th>";
-                str += "<th>" + detail.exceptionMsg + "</th>";
-                str += "<th>" + detail.logAddress + "</th>";
-                str += "</tr>";
-                $(str).appendTo($("#detailList"));
-            }
-        }
-
-        $("#pageMessage").text('');
-        var offset = result.offset;
-        var fetchSize = result.fetchSize;
-        var maxPageNum = result.maxPageNum;
-        $("#pageMessage").attr("data-fetchSize", fetchSize);
-        $("#pageMessage").attr("data-current-index", offset / fetchSize + 1);
-
-        var pageMsg;
-        var previous = "<li";
-        if (0 == offset / fetchSize) {
-            previous += " class=\"arrow unavailable\"";
-        }
-        else {
-            previous += " class=\"arrow\" onClick=\"previous(this)\"";
-        }
-        previous += " ><a href=\"javascript:void(0)\">&laquo;</a></li>"
-        pageMsg += previous;
-
-        var limit = 0;
-        if (maxPageNum > offset / fetchSize + 3) {
-            limit = offset / fetchSize + 3;
-        } else {
-            limit = maxPageNum;
-        }
-
-        for (var i = offset / fetchSize; i < limit; i++) {
-            var pageNum = "<li";
-            if (i == offset / fetchSize) {
-                pageNum += " class= \"current\"";
-            }
-            else {
-                pageNum += " onClick = \"searchDetail(this)\"";
-            }
-            pageNum += " data-index =" + (i + 1) + "><a href = \"javascript:void(0)\" >" + (i + 1) + " </a></li >"
-            pageMsg += pageNum;
-        }
-
-        var next = "<li";
-        if (maxPageNum == offset / fetchSize) {
-            next += " class=\"arrow unavailable\"";
-        } else {
-            next += " class=\"arrow\" onClick=\"next(this)\"";
-        }
-        next += " ><a href=\"javascript:void(0)\">&raquo;</a></li>";
-        pageMsg += next;
-
-        $(pageMsg).appendTo($("#pageMessage"));
+    function conditionSearch() {
+        $('div#wait-reveal').foundation('reveal', 'open');
+        $("#searchForm").ajaxSubmit({callback: function (result) {
+            $('div#wait-reveal').foundation('reveal', 'close');
+            conditionDetailSuccessOperation(result);
+        }, validate: false});
     }
 
     function findServerByProject(object) {
@@ -275,42 +278,6 @@
         });
     }
 
-    function previous(obj) {
-
-        var currentIndex = $(obj).parent().attr("data-current-index");
-        var fetchSize = $(obj).parent().attr("data-fetchSize");
-        var offset = (currentIndex - 2) * fetchSize;
-        redirectToSearch(offset);
-    }
-
-    function next(obj) {
-        var currentIndex = $(obj).parent().attr("data-current-index");
-        var fetchSize = $(obj).parent().attr("data-fetchSize");
-        var offset = currentIndex * fetchSize;
-        redirectToSearch(offset);
-    }
-
-    function searchDetail(obj) {
-        var index = $(obj).attr("data-index");
-        var fetchSize = $(obj).parent().attr("data-fetchSize");
-        var offset = (index - 1) * fetchSize;
-        redirectToSearch(offset);
-    }
-
-    function redirectToSearch(offset) {
-        $.ajax({
-            type: "POST",
-            url: "<@url value='/project/instance/log/action/change'/>",
-            data: "logIdList=" + logIdList + "&offset=" + parseInt(offset),
-            success: function (result) {
-                successOperation(result);
-            }
-        });
-    }
-
-    function search() {
-
-    }
 </script>
 <script>$(document).foundation();</script>
 </html>

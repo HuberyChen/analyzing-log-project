@@ -25,9 +25,6 @@ public class TimeConvertUtil {
     }
 
     public static List<String> getDateRange(String startDate, String endDate) {
-        startDate = TimeConvertUtil.formatDate(TimeConvertUtil.stringConvertToDate(startDate));
-        endDate = TimeConvertUtil.formatDate(TimeConvertUtil.stringConvertToDate(endDate));
-
         List<String> dates = new ArrayList<>();
         Date start = TimeConvertUtil.stringConvertToDate(startDate);
         Date end = TimeConvertUtil.stringConvertToDate(endDate);

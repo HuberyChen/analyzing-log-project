@@ -1,15 +1,13 @@
 package com.quidsi.log.analyzing.dao;
 
+import com.quidsi.core.database.JPAAccess;
+import com.quidsi.log.analyzing.domain.Project;
+import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Repository;
-
-import com.quidsi.core.database.JPAAccess;
-import com.quidsi.log.analyzing.domain.Project;
 
 @Repository
 public class ProjectDao {
@@ -38,6 +36,14 @@ public class ProjectDao {
         params.put("Name", name);
         sql.append("from ").append(Project.class.getName()).append(" where Name = :Name");
         return jpaAccess.findUniqueResult(sql.toString(), params);
+    }
+
+    public List<Project> getProjectByCondition(String condition) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        params.put("Name", condition);
+        sql.append("from ").append(Project.class.getName()).append(" where charindex(:Name,Name)<>0 ");
+        return jpaAccess.find(sql.toString(), params);
     }
 
     @Inject
