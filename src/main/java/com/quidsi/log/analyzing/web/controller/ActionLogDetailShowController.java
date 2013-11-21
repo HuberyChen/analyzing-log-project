@@ -103,7 +103,9 @@ public class ActionLogDetailShowController extends RESTController {
 
     private void getDetailsByCondition(Map<String, Object> map, SearchDetailCondition searchDetailCondition) {
         int totalCount = searchDetailCondition.getTotalCount();
+
         int offset = searchDetailCondition.getOffset();
+
         if (totalCount != 0 && totalCount == offset) {
             offset -= offset - ServiceConstant.DEFAULTFETCHSIZE;
             searchDetailCondition.setOffset(offset);
@@ -115,7 +117,6 @@ public class ActionLogDetailShowController extends RESTController {
     }
 
     private void getDetailsByLogIdList(List<Integer> logIdList, Map<String, Object> map, int initOffset, int totalCount) {
-
 
         int offset = initOffset;
 

@@ -5,14 +5,12 @@ import com.quidsi.log.analyzing.domain.ActionLogSchedule;
 import com.quidsi.log.analyzing.domain.LogFileWrapper;
 import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,10 +25,10 @@ public class DataValidate {
     private ErrorHandlingService errorHandlingService;
 
     public List<LogFileWrapper> initializeAllActionLogFileWrappers(String path, ActionLogSchedule actionLogSchedule) {
-        return getLogFileWrapperWithProjectAndServerAll(dateConverToString(new Date()), dateConverToString(new Date()), path, actionLogSchedule);
+        return getLogFileWrapperWithProjectAndServerAll(dateConvertToString(new Date()), dateConvertToString(new Date()), path, actionLogSchedule);
     }
 
-    public String dateConverToString(Date date) {
+    public String dateConvertToString(Date date) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.valueOf(DateUtils.getMonth(date) + 1)).append("/").append(String.valueOf(DateUtils.getDay(date) - 1)).append("/").append(String.valueOf(DateUtils.getYear(date)));
         return builder.toString();

@@ -1,6 +1,7 @@
 package com.quidsi.log.analyzing.dao;
 
 import com.quidsi.core.database.JPAAccess;
+import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
 import com.quidsi.log.analyzing.service.ServiceConstant;
@@ -81,10 +82,18 @@ public class ActionLogDetailDao {
 //    }
 
     private void conditionLimit(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
-        params.put("interfaceName", searchDetailCondition.getInterfaceName());
-        params.put("status", searchDetailCondition.getStatus());
-        params.put("errorCode", searchDetailCondition.getErrorCode());
-        sql.append(" and Interface = :interfaceName and Status = :status and errorCode = :errorCode");
+        if (StringUtils.hasText(searchDetailCondition.getInterfaceName())) {
+            params.put("interfaceName", searchDetailCondition.getInterfaceName());
+            sql.append(" and Interface = :interfaceName");
+        }
+        if (StringUtils.hasText(searchDetailCondition.getStatus())) {
+            params.put("status", searchDetailCondition.getStatus());
+            sql.append(" and Status = :status");
+        }
+        if (StringUtils.hasText(searchDetailCondition.getErrorCode())) {
+            params.put("errorCode", searchDetailCondition.getErrorCode());
+            sql.append(" and errorCode = :errorCode");
+        }
     }
 
     private void logIdLimit(Map<String, Object> params, StringBuilder sql, List<Integer> logIdList) {

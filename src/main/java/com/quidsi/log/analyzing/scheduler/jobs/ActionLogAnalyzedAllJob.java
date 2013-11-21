@@ -58,8 +58,8 @@ public class ActionLogAnalyzedAllJob extends Job {
 
     private ActionLogSchedule generateSchedule() {
         ActionLogSchedule schedule = new ActionLogSchedule();
-        schedule.setStartDate(dataValidate.dateConverToString(new Date()));
-        schedule.setEndDate(dataValidate.dateConverToString(new Date()));
+        schedule.setStartDate(dataValidate.dateConvertToString(new Date()));
+        schedule.setEndDate(dataValidate.dateConvertToString(new Date()));
         schedule.setEffectiveStartTime(new Date());
         schedule.setProject(ServiceConstant.TYPE_ALL);
         schedule.setInstance(ServiceConstant.TYPE_ALL);

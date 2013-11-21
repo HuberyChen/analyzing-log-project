@@ -1,5 +1,6 @@
 package com.quidsi.log.analyzing.service;
 
+import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.dao.LogFileDao;
 import com.quidsi.log.analyzing.domain.LogFile;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,13 @@ public class LogFileService {
 
     public List<LogFile> getLogFilesByFuzzyName(String date, String project, String server) {
         return logFileDao.getLogFilesByFuzzyName(date, project, server);
+    }
+
+    public List<LogFile> getLogFilesByCondition(String date, String project, String server) {
+        if (StringUtils.equals(ServiceConstant.TYPE_ALL, server) && !StringUtils.equals(ServiceConstant.TYPE_ALL, project)) {
+            throw new IllegalStateException("the instance are not found");
+        }
+        return logFileDao.getLogFilesByCondition(date, project, server);
     }
 
     public List<LogFile> getLogFilesByType(String logType) {
