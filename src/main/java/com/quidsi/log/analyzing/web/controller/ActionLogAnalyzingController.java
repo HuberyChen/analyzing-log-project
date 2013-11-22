@@ -8,7 +8,7 @@ import com.quidsi.log.analyzing.domain.ActionLogSchedule;
 import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.scheduler.jobs.ActionLogAnalyzedOnceJob;
-import com.quidsi.log.analyzing.service.DataConvert;
+import com.quidsi.log.analyzing.service.DataConverter;
 import com.quidsi.log.analyzing.service.ProjectService;
 import com.quidsi.log.analyzing.service.ScanService;
 import com.quidsi.log.analyzing.service.ScheduleService;
@@ -46,13 +46,13 @@ public class ActionLogAnalyzingController extends RESTController {
     private ScanService scanService;
     private ScheduleService scheduleService;
     private Scheduler scheduler;
-    private DataConvert dataConvert;
+    private DataConverter dataConverter;
 
     @RequestMapping(value = "/project/instance/log/action", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> actionLogAnalyzed(@Valid @RequestBody ActionLogAnalyzingRequest request) {
         Map<String, Object> map = new HashMap<>();
-        ActionLogSchedule actionLogSchedule = dataConvert.dataConvertToSchedule(request);
+        ActionLogSchedule actionLogSchedule = dataConverter.dataConvertToSchedule(request);
 
         if (null != scheduleService.getScheduleRunning(actionLogSchedule.getProject(), actionLogSchedule.getInstance())
                 || null != scheduleService.getScheduleRunning(actionLogSchedule.getProject(), ServiceConstant.TYPE_ALL)
@@ -215,7 +215,7 @@ public class ActionLogAnalyzingController extends RESTController {
     }
 
     @Inject
-    public void setDataConvert(DataConvert dataConvert) {
-        this.dataConvert = dataConvert;
+    public void setDataConverter(DataConverter dataConverter) {
+        this.dataConverter = dataConverter;
     }
 }

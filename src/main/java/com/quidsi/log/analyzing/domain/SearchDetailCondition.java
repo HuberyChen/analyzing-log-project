@@ -20,16 +20,12 @@ public class SearchDetailCondition {
 
     private int totalCount;
 
-    public List<Integer> getLogIdList() {
-        return logIdList;
+    public int getTotalCount() {
+        return totalCount;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
     }
 
     public String getInterfaceName() {
@@ -56,11 +52,15 @@ public class SearchDetailCondition {
         this.offset = offset;
     }
 
-    public int getTotalCount() {
-        return totalCount;
+    public String getStatus() {
+        return status;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<Integer> getLogIdList() {
+        return logIdList;
     }
 }

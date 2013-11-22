@@ -46,16 +46,16 @@
         </li>
     </ul>
     <ul class="right">
-        <li class="has-form"><a class="small radius button" href="<@url value='/signOut'/>">Logout</a></li>
+        <li class="has-form"><a style="margin-left: 5px;" class="small radius button" href="<@url value='/signOut'/>">Logout</a></li>
     </ul>
     <ul class="right">
-        <li class="has-form"><a class="small radius button" href="<@url value='/project/instance/details'/>">Project</a></li>
+        <li class="has-form"><a style="margin-left: 5px;" class="small radius button" href="<@url value='/project/instance/details'/>">Project</a></li>
     </ul>
     <ul class="right">
-        <li class="has-form"><a class="small radius button" href="<@url value='/schedule/details'/>">Schedule</a></li>
+        <li class="has-form"><a style="margin-left: 5px;" class="small radius button" href="<@url value='/schedule/details'/>">Schedule</a></li>
     </ul>
     <ul class="right">
-        <li class="has-form"><a class="small radius button" href="<@url value='/project/instance/log/action/detail'/>">Log Detail</a></li>
+        <li class="has-form"><a style="margin-left: 5px;" class="small radius button" href="<@url value='/project/instance/log/action/detail'/>">Detail</a></li>
     </ul>
 </nav>
 

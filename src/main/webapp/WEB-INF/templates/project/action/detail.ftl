@@ -15,12 +15,19 @@
     $(document).ready(function () {
         $("#startDate").datepicker();
         $("#endDate").datepicker();
+        findServerByProject($("#projectList"));
         $("#projectList").change(function () {
             findServerByProject(this);
+            $("#isChange").attr("value", true);
         });
-        $('div#search-details-reveal').foundation('reveal', 'open');
-        $("#close-delete").click(function () {
-            $("#delete-refinement-reveal").foundation('reveal', 'close');
+        $("#serverList").change(function () {
+            $("#isChange").attr("value", true);
+        });
+        $("#startDate").change(function () {
+            $("#isChange").attr("value", true);
+        });
+        $("#endDate").change(function () {
+            $("#isChange").attr("value", true);
         });
         $("#showDetailForm").validate({
             messages: {
@@ -56,138 +63,91 @@
     </ul>
 </nav>
 
-<!-- wait hop up-->
-<div id="wait-reveal" class="reveal-modal" style="height: 150px;">
-    <div class="row">
-        <div class="large-12 large-centered columns">
-            <h2>Please wait a moment!</h2>
-        </div>
-        <div class="large-2 large-centered columns">
-            <div class="loadingDiv"></div>
-        </div>
-    </div>
-</div>
+<input id="logIdListHidden" type="hidden">
 
-<!-- search detail hop up -->
-<div id="search-details-reveal" class="reveal-modal">
+<div class="row full page-title">
     <form class="custom" id="showDetailForm" action="<@url value='/project/instance/log/action/show'/>" method="post">
-        <div class="row">
-            <div id="info" class="large-12 large-centered  columns">
-                <h3>Action Log Detail Show</h3>
+        <div id="logIdShowList"></div>
+        <input id="totalCount" name="totalCount" type="hidden" value="0">
+        <input id="isChange" name="change" type="hidden">
+        <input id="offset" name="offset" type="hidden" value="0"/>
+
+        <div class="row collapse">
+            <div class="large-2 large columns">
+                <h4>Select Condition:</h4>
+            </div>
+            <div class="large-2 left columns">
+                <div id="errInfo" class="errorBox"></div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="large-12 large-centered columns">
-                <p id="errInfo" class="errorBox"></p></div>
+        <div class="row collapse">
+            <div class="large-3 centered columns">
+                <div class="small-4 columns text-right">
+                    <label style="margin-top:10px;">Project:</label>
+                </div>
+                <div class="small-7 columns">
+                    <select id="projectList" name="project">
+                        <#if projects??>
+                            <#list projects as project>
+                                <option value=${project.name}>${project.name}</option>
+                            </#list>
+                        </#if>
+                    </select>
+                </div>
+            </div>
+            <div class="large-3 centered columns">
+                <div class="small-4 columns text-right"><label style="margin-top:10px;">Instance:</label></div>
+                <div class="small-7 columns">
+                    <select id="serverList" name="serverName">
+                        <option id="default">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="large-3 centered columns">
+                <div class="small-4 columns text-right"><label style="margin-top:10px;">*Start date:</label></div>
+                <div class="small-7 columns"><input class="date left hasDatePicker required date" type="date" id="startDate" name="startDate"/></div>
+            </div>
+            <div class="large-3 centered columns">
+                <div class="small-4 columns text-right"><label style="margin-top:10px;">*End date:</label></div>
+                <div class="small-7 columns"><input class="date left hasDatePicker required date" type="date" id="endDate" name="endDate"/></div>
+            </div>
+
         </div>
+        <div class="row collapse">
+            <div class="large-3 centered columns">
+                <div class="small-4 columns text-right"><label style="margin-top:10px;">Status:</label></div>
+                <div class="small-7 columns">
+                    <select id="status" name="status">
+                        <option>SUCCESS</option>
+                        <option>ERROR</option>
+                        <option>WARNING</option>
+                    </select>
+                </div>
+            </div>
 
-        <div class="row">
-            <div class="large-12 large-centered columns">
-                <div class="row">
-                    <div class="large-12 large-centered columns">
-                        <div class="large-4 small-3 columns text-right">
-                            <label style="margin-top:10px;">Project</label>
-                        </div>
-                        <div class="large-8 small-9 columns">
-                            <select id="projectList" name="project">
-                                <option>All</option>
-                                <#if projects??>
-                                    <#list projects as project>
-                                        <option value=${project.name}>${project.name}</option>
-                                    </#list>
-                                </#if>
-                            </select>
-                        </div>
-                    </div>
+            <div class="large-3 centered columns">
+                <div class="small-4 columns text-right"><label style="margin-top:10px;">Interface:</label></div>
+                <div class="small-7 columns">
+                    <input id="interface" type="text" value="" name="interface">
+                </div>
+            </div>
+            <div class="small-3 columns">
+                <div class="small-4 columns text-right"><label style="margin-top:10px;">Error Code:</label></div>
+                <div class="small-7 columns">
+                    <input id="errorCode" type="text" name="errorCode"></div>
+            </div>
+            <div class="small-3 columns" style="padding-left: 55px;">
+                <div class="small-3 columns">
+                    <a class="small radius button" id="button" onclick="detailShow()" href="javascript:void(0)">Search</a>
                 </div>
 
-                <div class="row">
-                    <div class="large-12 large-centered columns">
-                        <div class="large-4 small-3 columns text-right"><label style="margin-top:10px;">Instance:</label></div>
-                        <div class="large-8 small-9 columns">
-                            <select id="serverList" name="instance">
-                                <option id="default">All</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="large-12 large-centered columns">
-                        <div class="large-4 small-3 columns text-right"><label style="margin-top:10px;">Start date:</label></div>
-                        <div class="large-8 small-9 columns"><input class="date left hasDatePicker required date" type="date" id="startDate" name="startDate"/></div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="large-12 large-centered columns">
-                        <div class="large-4 small-3 columns text-right"><label style="margin-top:10px;">End date:</label></div>
-                        <div class="large-8 small-9 columns"><input class="date left hasDatePicker required date" type="date" id="endDate" name="endDate"/></div>
-                    </div>
-                </div>
-
-                <input id="offset" name="offset" type="hidden" value="0"/>
-
-                <div class="row">
-                    <div class="large-12 large-centered columns">
-                        <p>
-                            <input style="margin-left: 180px;" class="small radius button" id="button" type="button" onclick="detailShow()" value="confirm"/>
-                        </p>
-
-                        <div class="loadingDiv displayNone" id="loadingLogo"></div>
-                    </div>
-                </div>
-
+                <div class="loadingDiv displayNone" id="loadingLogo"></div>
             </div>
         </div>
     </form>
-    <a class="close-reveal-modal">&#215;</a>
-</div>
-
-<div class="row full page-title">
-    <div class="large-7 column left">
-        <div class="row collapse">
-            <div class="small-2 columns">
-                <h6>Select Range:</h6>
-            </div>
-            <div class="small-2 columns">
-                <input style="border:0px;box-shadow:none;" type="text" readonly id="project">
-            </div>
-            <div class="small-2 columns">
-                <input style="border:0px;box-shadow:none;" type="text" readonly id="instance">
-            </div>
-            <div class="small-2 columns">
-                <input style="border:0px;box-shadow:none;" type="text" readonly id="start">
-            </div>
-            <div class="small-2 columns">
-                <input style="border:0px;box-shadow:none;" type="text" readonly id="end">
-            </div>
-            <div class="small-2 columns">
-                <a class="small radius button" id="changeRange" onclick="openDetailShow()" href="javascript:void(0)">Change Range</a>
-            </div>
-        </div>
-    </div>
-    <div class="large-5 column right">
-        <div class="row collapse">
-            <div class="small-3 columns">
-                <h6>Select Condition:</h6>
-            </div>
-            <form id="searchForm" action="<@url value='/project/instance/log/action/search/show'/>" method="post">
-                <div class="small-2 columns" style="padding-right: 10px;">
-                    <input id="status" type="text" name="status" placeholder="status">
-                </div>
-                <div class="small-3 columns" style="padding-right: 10px;">
-                    <input id="interface" type="text" value="" name="interface" placeholder="interface">
-                </div>
-                <div class="small-2 columns" style="padding-right: 10px;">
-                    <input id="errorCode" type="text" name="errorCode" placeholder="errorCode">
-                </div>
-                <div class="small-2 columns">
-                    <a class="small radius button" id="search" onclick="conditionSearch()" href="javascript:void(0)">Search</a>
-                </div>
-            </form>
-        </div>
+    <div>
+        <form id="pageChangeForm" action="<@url value='/project/instance/log/action/search/change'/>" method="post"></form>
     </div>
 </div>
 
@@ -211,8 +171,6 @@
         <div class="pagination-centered">
             <ul id="pageMessage" class="pagination">
             </ul>
-            <ul id="conditionPageMessage" class="pagination">
-            </ul>
         </div>
     </div>
 </div>
@@ -220,41 +178,23 @@
 
 </body>
 <@js src="detail.show.page.operation.js"/>
-<@js src="condition.detail.show.page.operation.js"/>
 <script type="text/javascript">
-
-    var logIdList;
-
-    function openDetailShow() {
-        $('div#search-details-reveal').foundation('reveal', 'open');
-    }
 
     function detailShow() {
         if (!$("#showDetailForm").valid()) {
             return false;
         }
 
-        $("#loadingLogo").css("display", "inline-block");
-        $("#button").attr("disabled", true);
+        var start = $("#startDate").val();
+        var end = $("#endDate").val();
+        var sDate = new Date(start.replace(/\-/g, '/'));
+        var eDate = new Date(end.replace(/\-/g, '/'));
+        if (start > end) {
+            alert("End date cannot be less than start date");
+            return;
+        }
 
-        $("#showDetailForm").ajaxSubmit({callback: function (result) {
-            $('#loadingLogo').css("display", "none");
-            $("#button").attr("disabled", false);
-            $("#project").attr("value", $("#projectList option:selected").text());
-            $("#instance").attr("value", $("#serverList option:selected").text());
-            $("#start").attr("value", $("#startDate").val());
-            $("#end").attr("value", $("#endDate").val());
-            $('div#search-details-reveal').foundation('reveal', 'close');
-            detailShowSuccessOperation(result);
-        }, validate: false});
-    }
-
-    function conditionSearch() {
-        $('div#wait-reveal').foundation('reveal', 'open');
-        $("#searchForm").ajaxSubmit({callback: function (result) {
-            $('div#wait-reveal').foundation('reveal', 'close');
-            conditionDetailSuccessOperation(result);
-        }, validate: false});
+        detailShowOperation();
     }
 
     function findServerByProject(object) {

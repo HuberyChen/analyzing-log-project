@@ -1,7 +1,5 @@
 package com.quidsi.log.analyzing.domain;
 
-import org.hibernate.annotations.Index;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,7 +16,6 @@ public class LogFile {
     private int id;
 
     @Column(name = "LogName")
-    @Index(name = "IX_Log_File_Name_Project_Instance", columnNames = { "LogName", "Project", "Instance" })
     private String logName;
 
     @Column(name = "Project")

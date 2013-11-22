@@ -92,7 +92,7 @@ public class ActionLogDetailDao {
         }
         if (StringUtils.hasText(searchDetailCondition.getErrorCode())) {
             params.put("errorCode", searchDetailCondition.getErrorCode());
-            sql.append(" and errorCode = :errorCode");
+            sql.append(" and Interface = :interfaceName");
         }
     }
 

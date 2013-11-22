@@ -1,28 +1,38 @@
 package com.quidsi.log.analyzing.web.request;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author hubery.chen
  */
-@XmlRootElement(name = "detail-show-request")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class DetailShowRequest {
 
-    @XmlElement(name = "startDate")
     private String startDate;
 
-    @XmlElement(name = "endDate")
     private String endDate;
 
-    @XmlElement(name = "project")
     private String project;
 
-    @XmlElement(name = "instance")
     private String serverName;
+
+    private String status;
+
+    private String interfaceName;
+
+    private String errorCode;
+
+    private int offset;
+
+    private final List<Integer> logIdList = new ArrayList<>();
+
+    private int totalCount;
+
+    private boolean change;
+
+    public List<Integer> getLogIdList() {
+        return logIdList;
+    }
 
     public String getStartDate() {
         return startDate;
@@ -40,9 +50,6 @@ public class DetailShowRequest {
         this.endDate = endDate;
     }
 
-    @XmlElement(name = "offset")
-    private int offset;
-
     public String getProject() {
         return project;
     }
@@ -59,11 +66,51 @@ public class DetailShowRequest {
         this.serverName = serverName;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
     public int getOffset() {
         return offset;
     }
 
     public void setOffset(int offset) {
         this.offset = offset;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public boolean isChange() {
+        return change;
+    }
+
+    public void setChange(boolean change) {
+        this.change = change;
     }
 }

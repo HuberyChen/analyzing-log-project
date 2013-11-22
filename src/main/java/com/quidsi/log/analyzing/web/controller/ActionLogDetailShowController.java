@@ -3,16 +3,21 @@ package com.quidsi.log.analyzing.web.controller;
 import com.quidsi.core.platform.web.rest.RESTController;
 import com.quidsi.core.platform.web.site.cookie.RequireCookie;
 import com.quidsi.core.platform.web.site.session.RequireSession;
+import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.domain.Project;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
+import com.quidsi.log.analyzing.domain.Server;
 import com.quidsi.log.analyzing.service.ActionLogDetailService;
-import com.quidsi.log.analyzing.service.DataConvert;
+import com.quidsi.log.analyzing.service.DataConverter;
 import com.quidsi.log.analyzing.service.LogFileService;
+import com.quidsi.log.analyzing.service.ProjectService;
+import com.quidsi.log.analyzing.service.ServerService;
 import com.quidsi.log.analyzing.service.ServiceConstant;
+import com.quidsi.log.analyzing.utils.LogReadUtils;
 import com.quidsi.log.analyzing.utils.TimeConvertUtil;
 import com.quidsi.log.analyzing.web.interceptor.LoginRequired;
-import com.quidsi.log.analyzing.web.request.ConditionDetailShowRequest;
 import com.quidsi.log.analyzing.web.request.DetailShowRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -39,66 +44,65 @@ import java.util.Map;
 public class ActionLogDetailShowController extends RESTController {
 
     private LogFileService logFileService;
+    private ProjectService projectService;
+    private ServerService serverService;
     private ActionLogDetailService actionLogDetailService;
-    private DataConvert dataConvert;
-
-    @RequestMapping(value = "/project/instance/log/action/search/change", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> actionDetailConditionPageManagement(@Valid @RequestBody ConditionDetailShowRequest request) {
-        Map<String, Object> map = new HashMap<>();
-        SearchDetailCondition searchDetailCondition = dataConvert.dataConvertToSearchDetailCondition(request);
-        searchDetailCondition.setOffset(request.getOffset());
-        searchDetailCondition.setTotalCount(request.getTotalCount());
-        getDetailsByCondition(map, searchDetailCondition);
-        return map;
-    }
-
-    @RequestMapping(value = "/project/instance/log/action/search/show", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> actionDetailConditionManagement(@Valid @RequestBody ConditionDetailShowRequest request) {
-        Map<String, Object> map = new HashMap<>();
-        SearchDetailCondition searchDetailCondition = dataConvert.dataConvertToSearchDetailCondition(request);
-        int totalCount = actionLogDetailService.getTotalCountByCondition(searchDetailCondition);
-
-        searchDetailCondition.setTotalCount(totalCount);
-        searchDetailCondition.setOffset(0);
-        getDetailsByCondition(map, searchDetailCondition);
-        return map;
-    }
-
-    @RequestMapping(value = "/project/instance/log/action/change", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> actionDetailPageManagement(@Valid @RequestParam List<Integer> logIdList, @Valid @RequestParam int offset, @Valid @RequestParam int totalCount) {
-        Map<String, Object> map = new HashMap<>();
-        getDetailsByLogIdList(logIdList, map, offset, totalCount);
-        return map;
-    }
-
+    private DataConverter dataConverter;
 
     @RequestMapping(value = "/project/instance/log/action/show", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> actionDetailManagement(@Valid @RequestBody DetailShowRequest request) {
         Map<String, Object> map = new HashMap<>();
+
+        SearchDetailCondition searchDetailCondition = dataConverter.dataConvertToSearchDetailCondition(request);
+        if (request.isChange()) {
+            getTotalCount(map, searchDetailCondition, request);
+        }
+
+        getDetailsByCondition(map, searchDetailCondition);
+        return map;
+    }
+
+    @RequestMapping(value = "/project/instance/log/action/showLog", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> logShow(@Valid @RequestParam String path) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("log", LogReadUtils.logRead(path));
+        return map;
+    }
+
+    private void getTotalCount(Map<String, Object> map, SearchDetailCondition searchDetailCondition, DetailShowRequest request) {
         List<String> dateList = TimeConvertUtil.getDateRange(request.getStartDate(), request.getEndDate());
         List<LogFile> logFiles = new ArrayList<>();
+        searchDetailCondition.getLogIdList().clear();
 
         if (CollectionUtils.isEmpty(dateList)) {
             map.put("actionLogDetails", null);
-            return map;
+            return;
         }
 
         for (String date : dateList) {
+            if (StringUtils.equals(ServiceConstant.TYPE_ALL, request.getServerName())) {
+                Project project = projectService.getProjectByName(request.getProject());
+                if (null == project) {
+                    throw new IllegalStateException("project not exists");
+                }
+                List<Server> servers = serverService.getServersByProjectId(project.getId());
+                if (CollectionUtils.isEmpty(servers)) {
+                    throw new IllegalStateException("servers not exist");
+                }
+                for (Server server : servers) {
+                    logFiles.addAll(logFileService.getLogFilesByFuzzyName(date, request.getProject(), server.getServerName()));
+                }
+            }
             logFiles.addAll(logFileService.getLogFilesByFuzzyName(date, request.getProject(), request.getServerName()));
         }
 
-        List<Integer> logIdList = new ArrayList<>();
         for (LogFile logFile : logFiles) {
-            logIdList.add(logFile.getId());
+            searchDetailCondition.getLogIdList().add(logFile.getId());
         }
 
-        int totalCount = actionLogDetailService.getTotalCount(logIdList);
-        getDetailsByLogIdList(logIdList, map, request.getOffset(), totalCount);
-        return map;
+        searchDetailCondition.setTotalCount(actionLogDetailService.getTotalCount(searchDetailCondition.getLogIdList()));
     }
 
     private void getDetailsByCondition(Map<String, Object> map, SearchDetailCondition searchDetailCondition) {
@@ -113,24 +117,7 @@ public class ActionLogDetailShowController extends RESTController {
 
         List<ActionLogDetail> details = actionLogDetailService.findConditionLimit(searchDetailCondition);
 
-        putMessageToMap(map, searchDetailCondition.getLogIdList(), details, searchDetailCondition.getOffset(), searchDetailCondition.getTotalCount());
-    }
-
-    private void getDetailsByLogIdList(List<Integer> logIdList, Map<String, Object> map, int initOffset, int totalCount) {
-
-        int offset = initOffset;
-
-        if (totalCount != 0 && totalCount == offset) {
-            offset -= offset - ServiceConstant.DEFAULTFETCHSIZE;
-        }
-
-        List<ActionLogDetail> details = actionLogDetailService.findDetail(logIdList, offset);
-
-        putMessageToMap(map, logIdList, details, offset, totalCount);
-    }
-
-    private void putMessageToMap(Map<String, Object> map, List<Integer> logIdList, List<ActionLogDetail> details, int offset, int totalCount) {
-        map.put("logIdList", logIdList);
+        map.put("logIdList", searchDetailCondition.getLogIdList());
         map.put("actionLogDetails", details);
         map.put("fetchSize", ServiceConstant.DEFAULTFETCHSIZE);
         map.put("offset", offset);
@@ -148,7 +135,17 @@ public class ActionLogDetailShowController extends RESTController {
     }
 
     @Inject
-    public void setDataConvert(DataConvert dataConvert) {
-        this.dataConvert = dataConvert;
+    public void setDataConverter(DataConverter dataConverter) {
+        this.dataConverter = dataConverter;
+    }
+
+    @Inject
+    public void setProjectService(ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
+    @Inject
+    public void setServerService(ServerService serverService) {
+        this.serverService = serverService;
     }
 }

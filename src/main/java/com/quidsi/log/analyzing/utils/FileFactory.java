@@ -1,7 +1,6 @@
 package com.quidsi.log.analyzing.utils;
 
 import com.quidsi.log.analyzing.service.ServiceConstant;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ public final class FileFactory {
                 str = bufferReader.readLine();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
         return messageMap;
@@ -64,7 +63,7 @@ public final class FileFactory {
                 len = in.read(buf);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         LOGGER.info("out file path={}", outFile.getAbsolutePath());
         return outFile.getAbsolutePath();
