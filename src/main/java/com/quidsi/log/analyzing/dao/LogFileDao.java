@@ -1,9 +1,7 @@
 package com.quidsi.log.analyzing.dao;
 
 import com.quidsi.core.database.JPAAccess;
-import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.LogFile;
-import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -30,7 +28,7 @@ public class LogFileDao {
         params.put("Project", project);
         params.put("Server", server);
         params.put("LogName", logName);
-        sql.append("from ").append(LogFile.class.getName()).append(" where project = :Project and instance = :Server and LogName = :LogName");
+        sql.append("from ").append(LogFile.class.getName()).append(" where project = :Project and instance = :Server and logName = :LogName");
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
@@ -40,23 +38,18 @@ public class LogFileDao {
         params.put("Project", project);
         params.put("Server", server);
         params.put("LogName", logName);
-        sql.append("from ").append(LogFile.class.getName()).append(" where project =:Project and instance =:Server and charindex(:LogName,LogName) <> 0");
+        sql.append("from ").append(LogFile.class.getName()).append(" where project =:Project and instance =:Server and charindex(:LogName,logName) <> 0");
         return jpaAccess.find(sql.toString(), params);
     }
 
     public List<LogFile> getLogFilesByCondition(String logName, String project, String server) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
+        params.put("Project", project);
+        params.put("Server", server);
         params.put("LogName", logName);
-        sql.append("from ").append(LogFile.class.getName()).append(" where charindex(:LogName,LogName) <> 0");
-        if (!StringUtils.equals(ServiceConstant.TYPE_ALL, project)) {
-            params.put("Project", project);
-            sql.append(" and project =:Project");
-        }
-        if (!StringUtils.equals(ServiceConstant.TYPE_ALL, server)) {
-            params.put("Server", server);
-            sql.append(" and instance =:Server");
-        }
+        params.put("IsAnalyzed", LogFile.IsAnalyzed.Y);
+        sql.append("from ").append(LogFile.class.getName()).append(" where project =:Project and instance =:Server and charindex(:LogName,logName) <> 0 and isAnalyzed =:IsAnalyzed");
         return jpaAccess.find(sql.toString(), params);
     }
 
@@ -64,7 +57,7 @@ public class LogFileDao {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("LogType", logType);
-        sql.append("from ").append(LogFile.class.getName()).append(" where LogType = :LogType");
+        sql.append("from ").append(LogFile.class.getName()).append(" where logType = :LogType");
         return jpaAccess.find(sql.toString(), params);
     }
 

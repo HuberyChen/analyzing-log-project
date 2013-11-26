@@ -37,14 +37,6 @@ public class ActionLogDetailService {
         return actionLogDetailDao.getTotalCountByCondition(searchDetailCondition);
     }
 
-    public List<ActionLogDetail> findDetail(List<Integer> logIdList, int offset) {
-        return actionLogDetailDao.findList(logIdList, offset);
-    }
-
-    public int getTotalCount(List<Integer> logIdList) {
-        return actionLogDetailDao.getTotalCount(logIdList);
-    }
-
     public List<ActionLogDetail> getRecordsByLogId(int logId) {
         return actionLogDetailDao.getRecordsByLogId(logId);
     }

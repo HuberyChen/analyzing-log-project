@@ -26,7 +26,7 @@ public class ProjectDao {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("Id", id);
-        sql.append("from ").append(Project.class.getName()).append(" where Id = :Id");
+        sql.append("from ").append(Project.class.getName()).append(" where id = :Id");
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
@@ -34,7 +34,7 @@ public class ProjectDao {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("Name", name);
-        sql.append("from ").append(Project.class.getName()).append(" where Name = :Name");
+        sql.append("from ").append(Project.class.getName()).append(" where name = :Name");
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
@@ -42,7 +42,7 @@ public class ProjectDao {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("Name", condition);
-        sql.append("from ").append(Project.class.getName()).append(" where charindex(:Name,Name)<>0 ");
+        sql.append("from ").append(Project.class.getName()).append(" where charindex(:Name,name)<>0 ");
         return jpaAccess.find(sql.toString(), params);
     }
 

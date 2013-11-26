@@ -33,9 +33,6 @@ public class DataConverter {
         searchDetailCondition.setStatus(request.getStatus());
         searchDetailCondition.setOffset(request.getOffset());
         searchDetailCondition.setTotalCount(request.getTotalCount());
-        for (int logId : request.getLogIdList()) {
-            searchDetailCondition.getLogIdList().add(logId);
-        }
         return searchDetailCondition;
     }
 }

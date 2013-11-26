@@ -1,8 +1,5 @@
 package com.quidsi.log.analyzing.web.request;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author hubery.chen
  */
@@ -24,15 +21,7 @@ public class DetailShowRequest {
 
     private int offset;
 
-    private final List<Integer> logIdList = new ArrayList<>();
-
     private int totalCount;
-
-    private boolean change;
-
-    public List<Integer> getLogIdList() {
-        return logIdList;
-    }
 
     public String getStartDate() {
         return startDate;
@@ -106,11 +95,4 @@ public class DetailShowRequest {
         this.totalCount = totalCount;
     }
 
-    public boolean isChange() {
-        return change;
-    }
-
-    public void setChange(boolean change) {
-        this.change = change;
-    }
 }

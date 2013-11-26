@@ -1,8 +1,10 @@
 package com.quidsi.log.analyzing.utils;
 
-import com.quidsi.core.util.DateUtils;
 import com.quidsi.core.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 public class TimeConvertUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeConvertUtil.class);
 
     public static String formatDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -20,8 +24,16 @@ public class TimeConvertUtil {
         if (!StringUtils.hasText(date)) {
             return null;
         }
-        String[] dateMessage = date.split("/");
-        return DateUtils.date(Integer.parseInt(dateMessage[2]), Integer.parseInt(dateMessage[0]) - 1, Integer.parseInt(dateMessage[1]));
+
+        Date dateFormat = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            dateFormat = sdf.parse(date);
+        } catch (ParseException e) {
+            LOGGER.info(e.getMessage());
+        }
+
+        return dateFormat;
     }
 
     public static List<String> getDateRange(String startDate, String endDate) {

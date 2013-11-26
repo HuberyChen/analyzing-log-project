@@ -7,13 +7,11 @@ import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.ActionLogSchedule;
 import com.quidsi.log.analyzing.domain.LogFile;
 import com.quidsi.log.analyzing.utils.FileFactory;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +43,7 @@ public class LogDetailReader {
         }
 
         for (Entry<Integer, String[]> entry : messageMap.entrySet()) {
-            records.add(dataConverToRecord(entry.getValue(), logFile.getId()));
+            records.add(dataConvertToRecord(entry.getValue(), logFile.getId()));
         }
         if (CollectionUtils.isEmpty(records)) {
             return;
@@ -55,7 +53,7 @@ public class LogDetailReader {
         logFileService.update(logFile);
     }
 
-    private ActionLogDetail dataConverToRecord(String[] messages, int logId) {
+    private ActionLogDetail dataConvertToRecord(String[] messages, int logId) {
         ActionLogDetail record = new ActionLogDetail();
         record.setLogId(logId);
         record.setRecordTime(dataConverToDate(messages[0]));

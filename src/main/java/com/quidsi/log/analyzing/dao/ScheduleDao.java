@@ -42,7 +42,7 @@ public class ScheduleDao {
     public List<ActionLogSchedule> getSchedulesIntraday() {
         Map<String, Object> param = new HashMap<>();
         param.put("now", getTimesMorning());
-        return jpaAccess.find("from " + ActionLogSchedule.class.getName() + " where EffectiveStartTime > :now order by EffectiveStartTime desc ", param);
+        return jpaAccess.find("from " + ActionLogSchedule.class.getName() + " where effectiveStartTime > :now order by effectiveStartTime desc ", param);
     }
 
     public ActionLogSchedule getScheduleById(int id) {

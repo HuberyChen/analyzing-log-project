@@ -3,6 +3,8 @@ package com.quidsi.log.analyzing.service;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.dao.LogFileDao;
 import com.quidsi.log.analyzing.domain.LogFile;
+import com.quidsi.log.analyzing.domain.Project;
+import com.quidsi.log.analyzing.domain.Server;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -17,6 +19,8 @@ import java.util.Map;
 public class LogFileService {
 
     private LogFileDao logFileDao;
+    private ProjectService projectService;
+    private ServerService serverService;
 
     @Transactional
     public int save(LogFile logFile) {
@@ -47,11 +51,25 @@ public class LogFileService {
         return logFileDao.getLogFilesByFuzzyName(date, project, server);
     }
 
-    public List<LogFile> getLogFilesByCondition(String date, String project, String server) {
-        if (StringUtils.equals(ServiceConstant.TYPE_ALL, server) && !StringUtils.equals(ServiceConstant.TYPE_ALL, project)) {
-            throw new IllegalStateException("the instance are not found");
+    public List<LogFile> getLogFilesByCondition(String date, String projectName, String serverName) {
+        List<LogFile> logFiles = new ArrayList<>();
+        if (StringUtils.equals(ServiceConstant.TYPE_ALL, serverName)) {
+            Project project = projectService.getProjectByName(projectName);
+            if (null == project) {
+                throw new IllegalStateException("project not exists");
+            }
+            List<Server> servers = serverService.getServersByProjectId(project.getId());
+            if (CollectionUtils.isEmpty(servers)) {
+                throw new IllegalStateException("servers not exist");
+            }
+            for (Server server : servers) {
+                logFiles.addAll(logFileDao.getLogFilesByCondition(date, projectName, server.getServerName()));
+            }
+        } else {
+            logFiles.addAll(logFileDao.getLogFilesByCondition(date, projectName, serverName));
         }
-        return logFileDao.getLogFilesByCondition(date, project, server);
+
+        return logFiles;
     }
 
     public List<LogFile> getLogFilesByType(String logType) {
@@ -86,5 +104,15 @@ public class LogFileService {
     @Inject
     public void setLogFileDao(LogFileDao logFileDao) {
         this.logFileDao = logFileDao;
+    }
+
+    @Inject
+    public void setProjectService(ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
+    @Inject
+    public void setServerService(ServerService serverService) {
+        this.serverService = serverService;
     }
 }

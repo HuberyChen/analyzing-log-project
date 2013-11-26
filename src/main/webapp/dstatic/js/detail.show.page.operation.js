@@ -3,16 +3,6 @@
  */
 
 function detailShowOperation() {
-    $("#logIdShowList").text('');
-    var logIdShowListValue;
-    var logIdList = $("#logIdListHidden").val().split(",");
-    for (var i = 1; i <= logIdList.length; i++) {
-        if (typeof logIdList[i] == "undefined") {
-            continue;
-        }
-        logIdShowListValue += "<input type='hidden' name = \"logIdList\" value = \"" + logIdList[i] + "\" >";
-    }
-    $(logIdShowListValue).appendTo($("#logIdShowList"));
 
     $("#loadingLogo").css("display", "inline-block");
     $("#button").attr("disabled", true);
@@ -20,11 +10,14 @@ function detailShowOperation() {
     $("#showDetailForm").ajaxSubmit({callback: function (result) {
         $('#loadingLogo').css("display", "none");
         $("#button").attr("disabled", false);
-        $("#logIdListHidden").attr("value", result.logIdList);
         $("#totalCount").attr("value", result.totalCount);
+        $("#totalShowCount").attr("value", result.totalCount);
+
+        var offset = result.offset;
+        var fetchSize = result.fetchSize;
+
         $("#pageMessage").attr("data-fetchSize", fetchSize);
         $("#pageMessage").attr("data-current-index", offset / fetchSize + 1);
-        $("#isChange").attr("value", false);
 
         $("#detailList").text('');
         var detailList = result.actionLogDetails;
@@ -39,7 +32,11 @@ function detailShowOperation() {
                 str += "<th>" + detail.requestMethod + "</th>";
                 str += "<th>" + detail.errorCode + "</th>";
                 str += "<th>" + detail.exceptionMsg + "</th>";
-                str += "<th>" + detail.logAddress + "</th>";
+                if (" " == detail.logAddress) {
+                    str += "<th>" + detail.logAddress + "</th>";
+                } else {
+                    str += "<th><a href='/analyzing-log-project/project/instance/log/action/showLog?path=" + detail.logAddress + "' target='view_window'>" + detail.logAddress + "</a></th>";
+                }
                 str += "</tr>";
                 $(str).appendTo($("#detailList"));
             }
@@ -47,52 +44,52 @@ function detailShowOperation() {
 
         $("#pageMessage").text('');
         $("#fuzzyPageMessage").text('');
-        var offset = result.offset;
-        var fetchSize = result.fetchSize;
 
         totalCount = result.totalCount;
         var maxPageNum = parseInt(totalCount / fetchSize);
 
-        var pageMsg;
-        var previous = "<li";
-        if (0 == offset / fetchSize) {
-            previous += " class=\"arrow unavailable\"";
-        }
-        else {
-            previous += " class=\"arrow\" onClick=\"previous(this)\"";
-        }
-        previous += " ><a href=\"javascript:void(0)\">&laquo;</a></li>"
-        pageMsg += previous;
-
-        var limit = 0;
-        if (maxPageNum > offset / fetchSize + 3) {
-            limit = offset / fetchSize + 3;
-        } else {
-            limit = maxPageNum;
-        }
-
-        for (var i = offset / fetchSize; i < limit; i++) {
-            var pageNum = "<li";
-            if (i == offset / fetchSize) {
-                pageNum += " class= \"current\"";
+        if (0 != maxPageNum) {
+            var pageMsg;
+            var previous = "<li";
+            if (0 == offset / fetchSize) {
+                previous += " class=\"arrow unavailable\"";
             }
             else {
-                pageNum += " onClick = \"searchDetail(this)\"";
+                previous += " class=\"arrow\" onClick=\"previous(this)\"";
             }
-            pageNum += " data-index =" + (i + 1) + "><a href = \"javascript:void(0)\" >" + (i + 1) + " </a></li >"
-            pageMsg += pageNum;
-        }
+            previous += " ><a href=\"javascript:void(0)\">&laquo;</a></li>"
+            pageMsg += previous;
 
-        var next = "<li";
-        if (maxPageNum == offset / fetchSize) {
-            next += " class=\"arrow unavailable\"";
-        } else {
-            next += " class=\"arrow\" onClick=\"next(this)\"";
-        }
-        next += " ><a href=\"javascript:void(0)\">&raquo;</a></li>";
-        pageMsg += next;
+            var limit = 0;
+            if (maxPageNum > offset / fetchSize + 3) {
+                limit = offset / fetchSize + 3;
+            } else {
+                limit = maxPageNum;
+            }
 
-        $(pageMsg).appendTo($("#pageMessage"));
+            for (var i = offset / fetchSize; i <= limit; i++) {
+                var pageNum = "<li";
+                if (i == offset / fetchSize) {
+                    pageNum += " class= \"current\"";
+                }
+                else {
+                    pageNum += " onClick = \"searchDetail(this)\"";
+                }
+                pageNum += " data-index =" + (i + 1) + "><a href = \"javascript:void(0)\" >" + (i + 1) + " </a></li >"
+                pageMsg += pageNum;
+            }
+
+            var next = "<li";
+            if (maxPageNum == offset / fetchSize) {
+                next += " class=\"arrow unavailable\"";
+            } else {
+                next += " class=\"arrow\" onClick=\"next(this)\"";
+            }
+            next += " ><a href=\"javascript:void(0)\">&raquo;</a></li>";
+            pageMsg += next;
+
+            $(pageMsg).appendTo($("#pageMessage"));
+        }
     }, validate: false});
 }
 

@@ -1,15 +1,13 @@
 package com.quidsi.log.analyzing.dao;
 
+import com.quidsi.core.database.JPAAccess;
+import com.quidsi.log.analyzing.domain.Server;
+import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Repository;
-
-import com.quidsi.core.database.JPAAccess;
-import com.quidsi.log.analyzing.domain.Server;
 
 @Repository
 public class ServerDao {
@@ -25,7 +23,7 @@ public class ServerDao {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("ProjectId", projectId);
-        sql.append("from ").append(Server.class.getName()).append(" where ProjectId = :ProjectId");
+        sql.append("from ").append(Server.class.getName()).append(" where projectId = :ProjectId");
         return jpaAccess.find(sql.toString(), params);
     }
 
@@ -33,7 +31,7 @@ public class ServerDao {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         params.put("ServerName", serverName);
-        sql.append("from ").append(Server.class.getName()).append(" where ServerName = :ServerName");
+        sql.append("from ").append(Server.class.getName()).append(" where serverName = :ServerName");
         return jpaAccess.find(sql.toString(), params);
     }
 
@@ -46,7 +44,7 @@ public class ServerDao {
         Map<String, Object> params = new HashMap<>();
         params.put("ProjectId", projectId);
         params.put("ServerName", serverName);
-        sql.append("from ").append(Server.class.getName()).append(" where ProjectId = :ProjectId and ServerName = :ServerName");
+        sql.append("from ").append(Server.class.getName()).append(" where projectId = :ProjectId and serverName = :ServerName");
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 

@@ -53,10 +53,10 @@ public class ScanUtils {
             return null;
         }
         LOGGER.info("root exists");
-        Stack<File> fileStack = new Stack<File>();
+        Stack<File> fileStack = new Stack<>();
         fileStack.add(root);
-        final List<Pattern> namePatterns = new ArrayList<Pattern>();
-        final List<Pattern> pathPatterns = new ArrayList<Pattern>();
+        final List<Pattern> namePatterns = new ArrayList<>();
+        final List<Pattern> pathPatterns = new ArrayList<>();
         if (!CollectionUtils.isEmpty(nameFilters)) {
             for (String f : nameFilters) {
                 namePatterns.add(Pattern.compile(f));
