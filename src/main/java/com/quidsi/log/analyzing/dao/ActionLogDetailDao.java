@@ -4,6 +4,7 @@ import com.quidsi.core.database.JPAAccess;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
+import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -20,26 +21,6 @@ public class ActionLogDetailDao {
     public int save(ActionLogDetail record) {
         jpaAccess.save(record);
         return record.getId();
-    }
-
-//    public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
-//        Map<String, Object> params = new HashMap<>();
-//        StringBuilder sql = new StringBuilder();
-//        conditionSql(params, sql, searchDetailCondition);
-//        sql.append(" order by recordTime desc");
-//        return jpaAccess.find(sql.toString(), params, searchDetailCondition.getOffset(), ServiceConstant.DEFAULTFETCHSIZE);
-//    }
-
-    public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
-        Map<String, Object> params = new HashMap<>();
-        StringBuilder sql = new StringBuilder();
-        findConditionLimit(params, sql, searchDetailCondition);
-    }
-
-    private void findConditionLimitId(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
-        sql.append("select detail.id");
-        conditionSql(params, sql, searchDetailCondition);
-        sql.append(" order by recordTime desc");
     }
 
     public List<ActionLogDetail> getRecordsByLogId(int logId) {
@@ -62,6 +43,40 @@ public class ActionLogDetailDao {
         return result.get(0).intValue();
     }
 
+    //TODO if condition is interface or errorCode
+    //TODO determine whether need a temporary table
+    public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" where id in (");
+        findConditionLimitId(params, sql, searchDetailCondition);
+        sql.append(")");
+        return jpaAccess.find(sql.toString(), params, searchDetailCondition.getOffset(), ServiceConstant.DEFAULTFETCHSIZE);
+    }
+
+    private void findConditionLimitId(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
+        sql.append("select detail.id");
+        conditionSql(params, sql, searchDetailCondition);
+        sql.append(" order by detail.recordTime desc");
+    }
+
+    private void conditionSql(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
+        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" detail").append(" where exists (");
+        logIdLimit(params, sql, searchDetailCondition.getLogIdList());
+        conditionLimit(params, sql, searchDetailCondition);
+        sql.append(")");
+    }
+
+    private void logIdLimit(Map<String, Object> params, StringBuilder sql, List<Integer> logIdList) {
+        sql.append("select 1 from ").append(ActionLogDetail.class.getName());
+        if (CollectionUtils.isEmpty(logIdList)) {
+            params.put("logIdList", null);
+        } else {
+            params.put("logIdList", logIdList);
+        }
+        sql.append(" where detail.logId in (:logIdList)");
+    }
+
     private void conditionLimit(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
         if (StringUtils.hasText(searchDetailCondition.getInterfaceName())) {
             params.put("interfaceName", searchDetailCondition.getInterfaceName());
@@ -75,23 +90,6 @@ public class ActionLogDetailDao {
             params.put("errorCode", searchDetailCondition.getErrorCode());
             sql.append(" and detail.errorCode = :errorCode");
         }
-    }
-
-    private void logIdLimit(Map<String, Object> params, StringBuilder sql, List<Integer> logIdList) {
-        sql.append("select 1 from ").append(ActionLogDetail.class.getName());
-        if (CollectionUtils.isEmpty(logIdList)) {
-            params.put("logIdList", null);
-        } else {
-            params.put("logIdList", logIdList);
-        }
-        sql.append(" where detail.logId in (:logIdList)");
-    }
-
-    private void conditionSql(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
-        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" detail").append(" where exists (");
-        logIdLimit(params, sql, searchDetailCondition.getLogIdList());
-        conditionLimit(params, sql, searchDetailCondition);
-        sql.append(")");
     }
 
     @Inject
