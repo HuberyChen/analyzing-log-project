@@ -4,8 +4,6 @@ import com.quidsi.core.database.JPAAccess;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
-import com.quidsi.log.analyzing.domain.TempId;
-import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -46,19 +44,19 @@ public class ActionLogDetailDao {
 
     //TODO if condition is interface or errorCode
     //TODO determine whether need a temporary table
-    public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
+    public List<ActionLogDetail> findConditionLimit(List<Integer> ids, int offset, int fetchSize) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder sql = new StringBuilder();
-        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" t1 where INNER JOIN ").append(TempId.class.getName()).append(" t2 ON t1.Id=t2.Id order by t2.ID ");
-        return jpaAccess.find(sql.toString(), params, searchDetailCondition.getOffset(), ServiceConstant.DEFAULTFETCHSIZE);
+        params.put("ids", ids);
+        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" where id in (:ids) order by recordTime desc");
+        return jpaAccess.find(sql.toString(), params, offset, fetchSize);
     }
 
-    public List<Integer> createConditionLimitIdTemp(SearchDetailCondition searchDetailCondition) {
+    public List<Integer> findConditionLimitId(SearchDetailCondition searchDetailCondition) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder sql = new StringBuilder();
-        sql.append(" select detail.id");
+        sql.append("select detail.id");
         conditionSql(params, sql, searchDetailCondition);
-        sql.append(" order by detail.recordTime desc");
         return jpaAccess.find(sql.toString(), params);
     }
 
