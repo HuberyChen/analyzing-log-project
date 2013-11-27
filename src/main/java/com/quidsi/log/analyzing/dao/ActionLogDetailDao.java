@@ -6,6 +6,7 @@ import com.quidsi.core.database.JPAAccess;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
+import com.quidsi.log.analyzing.domain.TempLog;
 import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 
@@ -50,14 +51,14 @@ public class ActionLogDetailDao {
         return jdbcAccess.findInteger(sql.toString(), params.toArray());
     }
 
-    public List<Integer> findConditionLimitId(SearchDetailCondition searchDetailCondition) {
+    public List<TempLog> findConditionLimitId(SearchDetailCondition searchDetailCondition) {
         List<Object> params = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select row_number() over(order by RecordTime DESC) timeId,t1.ID, t1.LogId");
         conditionSql(params, sql, searchDetailCondition);
         sql.append(" and timeId>").append(searchDetailCondition.getOffset());
         sql.append(" and timeId<").append(searchDetailCondition.getOffset() + ServiceConstant.DEFAULTFETCHSIZE);
-        return jdbcAccess.find(sql.toString(), EntityRowMapper.rowMapper(Integer.class), params.toArray());
+        return jdbcAccess.find(sql.toString(), EntityRowMapper.rowMapper(TempLog.class), params.toArray());
     }
 
     private void conditionSql(List<Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
