@@ -21,8 +21,6 @@ public class DetailShowRequest {
 
     private int offset;
 
-    private int totalCount;
-
     public String getStartDate() {
         return startDate;
     }
@@ -85,14 +83,6 @@ public class DetailShowRequest {
 
     public void setOffset(int offset) {
         this.offset = offset;
-    }
-
-    public int getTotalCount() {
-        return totalCount;
-    }
-
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
     }
 
 }

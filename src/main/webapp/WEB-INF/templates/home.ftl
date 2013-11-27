@@ -107,7 +107,7 @@
                 <div class="large-12 large-centered columns">
                     <p>
                         <input style="margin-left: 180px;margin-top: -10px;" id="button" type="button" onclick="analyzingLog()" value="confirm"/>
-                        <span class="loadingDiv displayNone" id="loadingLogo"></span>
+                        <span style="margin-top: -12px;" class="loadingDiv displayNone" id="loadingLogo"></span>
                     </p>
                 </div>
             </div>

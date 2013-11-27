@@ -11,6 +11,7 @@ import com.quidsi.log.analyzing.service.ActionLogDetailService;
 import com.quidsi.log.analyzing.service.DataConverter;
 import com.quidsi.log.analyzing.service.LogFileService;
 import com.quidsi.log.analyzing.service.ServiceConstant;
+import com.quidsi.log.analyzing.service.TempService;
 import com.quidsi.log.analyzing.utils.TimeConvertUtil;
 import com.quidsi.log.analyzing.web.interceptor.LoginRequired;
 import com.quidsi.log.analyzing.web.request.DetailShowRequest;
@@ -44,6 +45,7 @@ public class ActionLogDetailShowController extends RESTController {
     private LogFileService logFileService;
     private ActionLogDetailService actionLogDetailService;
     private DataConverter dataConverter;
+    private TempService tempService;
 
     @RequestMapping(value = "/project/instance/log/action/show", method = RequestMethod.POST)
     @ResponseBody
@@ -53,7 +55,11 @@ public class ActionLogDetailShowController extends RESTController {
         SearchDetailCondition searchDetailCondition = dataConverter.dataConvertToSearchDetailCondition(request);
         StopWatch watch = new StopWatch();
 
-        getLogIdList(map, searchDetailCondition, request, watch);
+        List<Integer> logIdList = getLogIdList(request, watch);
+
+        tempService.dataStoreIntoTemp(logIdList);
+        LOGGER.info("Data store into temp takes " + watch.elapsedTime());
+        watch.reset();
 
         searchDetailCondition.setTotalCount(actionLogDetailService.getTotalCountByCondition(searchDetailCondition));
         LOGGER.info("Getting detail condition total count takes " + watch.elapsedTime());
@@ -63,14 +69,13 @@ public class ActionLogDetailShowController extends RESTController {
         return map;
     }
 
-    private void getLogIdList(Map<String, Object> map, SearchDetailCondition searchDetailCondition, DetailShowRequest request, StopWatch watch) {
+    private List<Integer> getLogIdList(DetailShowRequest request, StopWatch watch) {
         List<String> dateList = TimeConvertUtil.getDateRange(request.getStartDate(), request.getEndDate());
         List<LogFile> logFiles = new ArrayList<>();
-        searchDetailCondition.getLogIdList().clear();
+        List<Integer> logIdList = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(dateList)) {
-            map.put("actionLogDetails", null);
-            return;
+            return null;
         }
 
         for (String date : dateList) {
@@ -78,10 +83,11 @@ public class ActionLogDetailShowController extends RESTController {
         }
 
         for (LogFile logFile : logFiles) {
-            searchDetailCondition.getLogIdList().add(logFile.getId());
+            logIdList.add(logFile.getId());
         }
         LOGGER.info("Getting log id list takes " + watch.elapsedTime());
         watch.reset();
+        return logIdList;
     }
 
     private void getDetailsByCondition(Map<String, Object> map, SearchDetailCondition searchDetailCondition, StopWatch watch) {
@@ -97,7 +103,6 @@ public class ActionLogDetailShowController extends RESTController {
         List<ActionLogDetail> details = actionLogDetailService.findConditionLimit(searchDetailCondition);
         LOGGER.info("Getting details by condition takes " + watch.elapsedTime());
 
-        map.put("logIdList", searchDetailCondition.getLogIdList());
         map.put("actionLogDetails", details);
         map.put("fetchSize", ServiceConstant.DEFAULTFETCHSIZE);
         map.put("offset", offset);
@@ -117,5 +122,10 @@ public class ActionLogDetailShowController extends RESTController {
     @Inject
     public void setDataConverter(DataConverter dataConverter) {
         this.dataConverter = dataConverter;
+    }
+
+    @Inject
+    public void setTempService(TempService tempService) {
+        this.tempService = tempService;
     }
 }

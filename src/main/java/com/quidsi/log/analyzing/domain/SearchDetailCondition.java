@@ -1,8 +1,5 @@
 package com.quidsi.log.analyzing.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author hubery.chen
  */
@@ -15,8 +12,6 @@ public class SearchDetailCondition {
     private String errorCode;
 
     private int offset;
-
-    private final List<Integer> logIdList = new ArrayList<>();
 
     private int totalCount;
 
@@ -60,7 +55,4 @@ public class SearchDetailCondition {
         this.status = status;
     }
 
-    public List<Integer> getLogIdList() {
-        return logIdList;
-    }
 }

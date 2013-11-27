@@ -11,7 +11,6 @@ function detailShowOperation() {
         $('#loadingLogo').css("display", "none");
         $("#button").attr("disabled", false);
         $("#totalCount").attr("value", result.totalCount);
-        $("#totalShowCount").attr("value", result.totalCount);
 
         var offset = result.offset;
         var fetchSize = result.fetchSize;

@@ -32,7 +32,6 @@ public class DataConverter {
         searchDetailCondition.setErrorCode(request.getErrorCode());
         searchDetailCondition.setStatus(request.getStatus());
         searchDetailCondition.setOffset(request.getOffset());
-        searchDetailCondition.setTotalCount(request.getTotalCount());
         return searchDetailCondition;
     }
 }

@@ -17,6 +17,7 @@
         $("#endDate").datepicker();
         findServerByProject($("#projectList"));
         $("#projectList").change(function () {
+            $("#serverList").next().children(".current").text('All');
             findServerByProject(this);
         });
         $("#showDetailForm").validate({
@@ -55,7 +56,6 @@
 
 <div class="row full page-title">
     <form class="custom" id="showDetailForm" action="<@url value='/project/instance/log/action/show'/>" method="post">
-        <input id="totalCount" name="totalCount" type="hidden" value="0">
         <input id="offset" name="offset" type="hidden" value="0"/>
 
         <div class="row collapse">
@@ -115,7 +115,7 @@
             <div class="large-3 centered columns">
                 <div class="small-4 columns text-right"><label style="margin-top:10px;">Interface:</label></div>
                 <div class="small-7 columns">
-                    <input id="interface" type="text" value="" name="interface">
+                    <input id="interface" type="text" value="" name="interfaceName">
                 </div>
             </div>
             <div class="small-3 columns">
@@ -140,7 +140,7 @@
     <div class="large-2 left columns">
         <div class="small-5 columns" style="padding-left: 0px;padding-right: 0px;margin-top:10px;"><label>Total Count:</label></div>
         <div class="small-3 columns" style="padding-left: 0px;margin-right: 65px;">
-            <input id="totalShowCount" value="0" readonly type="text" style="border: none;box-shadow: none;width: 200px;">
+            <input id="totalCount" value="0" readonly type="text" style="border: none;box-shadow: none;width: 200px;">
         </div>
     </div>
     <table class="business-rules" style="width:100%" id="detailDisplayTable" name="detailDisplayTable">
@@ -177,6 +177,7 @@
             return false;
         }
 
+        $("#offset").attr("value", 0);
         var start = $("#startDate").val();
         var end = $("#endDate").val();
         var sDate = new Date(start.replace(/\-/g, '/'));

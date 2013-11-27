@@ -1,13 +1,16 @@
 package com.quidsi.log.analyzing.dao;
 
+import com.quidsi.core.database.EntityRowMapper;
+import com.quidsi.core.database.JDBCAccess;
 import com.quidsi.core.database.JPAAccess;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
+import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,7 @@ import java.util.Map;
 public class ActionLogDetailDao {
 
     private JPAAccess jpaAccess;
+    private JDBCAccess jdbcAccess;
 
     public int save(ActionLogDetail record) {
         jpaAccess.save(record);
@@ -30,70 +34,60 @@ public class ActionLogDetailDao {
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
-    public int getTotalCountByCondition(SearchDetailCondition searchDetailCondition) {
-        StringBuilder sql = new StringBuilder();
-        Map<String, Object> params = new HashMap<>();
-        sql.append("select count(Id) ");
-        conditionSql(params, sql, searchDetailCondition);
-        List<Long> result = jpaAccess.find(sql.toString(), params);
-        if (CollectionUtils.isEmpty(result)) {
-            return 0;
-        }
-        return result.get(0).intValue();
-    }
-
-    //TODO if condition is interface or errorCode
-    //TODO determine whether need a temporary table
-    public List<ActionLogDetail> findConditionLimit(List<Integer> ids, int offset, int fetchSize) {
+    public List<ActionLogDetail> findConditionLimit(List<Integer> ids) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         params.put("ids", ids);
         sql.append(" from ").append(ActionLogDetail.class.getName()).append(" where id in (:ids) order by recordTime desc");
-        return jpaAccess.find(sql.toString(), params, offset, fetchSize);
-    }
-
-    public List<Integer> findConditionLimitId(SearchDetailCondition searchDetailCondition) {
-        Map<String, Object> params = new HashMap<>();
-        StringBuilder sql = new StringBuilder();
-        sql.append("select detail.id");
-        conditionSql(params, sql, searchDetailCondition);
         return jpaAccess.find(sql.toString(), params);
     }
 
-    private void conditionSql(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
-        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" detail").append(" where exists (");
-        logIdLimit(params, sql, searchDetailCondition.getLogIdList());
+    public int getTotalCountByCondition(SearchDetailCondition searchDetailCondition) {
+        StringBuilder sql = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+        sql.append("select count(Id) ");
+        conditionSql(params, sql, searchDetailCondition);
+        return jdbcAccess.findInteger(sql.toString(), params.toArray());
+    }
+
+    public List<Integer> findConditionLimitId(SearchDetailCondition searchDetailCondition) {
+        List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("select row_number() over(order by RecordTime DESC) timeId,t1.ID, t1.LogId");
+        conditionSql(params, sql, searchDetailCondition);
+        sql.append(" and timeId>").append(searchDetailCondition.getOffset());
+        sql.append(" and timeId<").append(searchDetailCondition.getOffset() + ServiceConstant.DEFAULTFETCHSIZE);
+        return jdbcAccess.find(sql.toString(), EntityRowMapper.rowMapper(Integer.class), params.toArray());
+    }
+
+    private void conditionSql(List<Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
+        sql.append(" from Action_Log_Detail t1");
+        sql.append(" INNER JOIN Temp_Log_Id t2 ON t1.LogId=t2.LogId where 1=1");
         conditionLimit(params, sql, searchDetailCondition);
-        sql.append(")");
     }
 
-    private void logIdLimit(Map<String, Object> params, StringBuilder sql, List<Integer> logIdList) {
-        sql.append("select 1 from ").append(ActionLogDetail.class.getName());
-        if (CollectionUtils.isEmpty(logIdList)) {
-            params.put("logIdList", null);
-        } else {
-            params.put("logIdList", logIdList);
-        }
-        sql.append(" where detail.logId in (:logIdList)");
-    }
-
-    private void conditionLimit(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
+    private void conditionLimit(List<Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
         if (StringUtils.hasText(searchDetailCondition.getInterfaceName())) {
-            params.put("interfaceName", searchDetailCondition.getInterfaceName());
-            sql.append(" and charindex(:interfaceName,detail.interface) <> 0");
+            params.add(searchDetailCondition.getInterfaceName());
+            sql.append(" and charindex(t1.interface,?) <> 0");
         }
         if (StringUtils.hasText(searchDetailCondition.getStatus())) {
-            params.put("status", searchDetailCondition.getStatus());
-            sql.append(" and detail.status = :status");
+            params.add(searchDetailCondition.getStatus());
+            sql.append(" and t1.status = ?");
         }
         if (StringUtils.hasText(searchDetailCondition.getErrorCode())) {
-            params.put("errorCode", searchDetailCondition.getErrorCode());
-            sql.append(" and detail.errorCode = :errorCode");
+            params.add(searchDetailCondition.getErrorCode());
+            sql.append(" and t1.errorCode = ?");
         }
     }
 
     @Inject
     public void setJpaAccess(JPAAccess jpaAccess) {
         this.jpaAccess = jpaAccess;
+    }
+
+    @Inject
+    public void setJdbcAccess(JDBCAccess jdbcAccess) {
+        this.jdbcAccess = jdbcAccess;
     }
 }
