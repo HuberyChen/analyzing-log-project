@@ -3,13 +3,11 @@ package com.quidsi.log.analyzing.service;
 import com.quidsi.log.analyzing.dao.ActionLogDetailDao;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
-import com.quidsi.log.analyzing.domain.TempLog;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,15 +30,7 @@ public class ActionLogDetailService {
     }
 
     public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
-        List<TempLog> tempLogs = actionLogDetailDao.findConditionLimitId(searchDetailCondition);
-        if (CollectionUtils.isEmpty(tempLogs)) {
-            return null;
-        }
-        List<Integer> ids = new ArrayList<>();
-        for (TempLog tempLog : tempLogs) {
-            ids.add(tempLog.getId());
-        }
-        return actionLogDetailDao.findConditionLimit(ids);
+        return actionLogDetailDao.findConditionLimit(searchDetailCondition);
     }
 
     public int getTotalCountByCondition(SearchDetailCondition searchDetailCondition) {

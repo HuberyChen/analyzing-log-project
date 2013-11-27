@@ -6,7 +6,6 @@ import com.quidsi.core.database.JPAAccess;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
-import com.quidsi.log.analyzing.domain.TempLog;
 import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 
@@ -35,30 +34,28 @@ public class ActionLogDetailDao {
         return jpaAccess.findUniqueResult(sql.toString(), params);
     }
 
-    public List<ActionLogDetail> findConditionLimit(List<Integer> ids) {
-        Map<String, Object> params = new HashMap<>();
-        StringBuilder sql = new StringBuilder();
-        params.put("ids", ids);
-        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" where id in (:ids) order by recordTime desc");
-        return jpaAccess.find(sql.toString(), params);
-    }
-
     public int getTotalCountByCondition(SearchDetailCondition searchDetailCondition) {
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
-        sql.append("select count(Id) ");
+        sql.append(" select count(t1.Id) ");
         conditionSql(params, sql, searchDetailCondition);
         return jdbcAccess.findInteger(sql.toString(), params.toArray());
     }
 
-    public List<TempLog> findConditionLimitId(SearchDetailCondition searchDetailCondition) {
+    public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
         List<Object> params = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("select row_number() over(order by RecordTime DESC) timeId,t1.ID, t1.LogId");
+        findConditionLimitId(params, sql, searchDetailCondition);
+        sql.append(" SELECT t1.* FROM Action_Log_Detail t1 INNER JOIN #tmplog t2 ON t1.id=t2.Id");
+        sql.append(" where t2.timeId>").append(searchDetailCondition.getOffset());
+        sql.append(" and t2.timeId<").append(searchDetailCondition.getOffset() + ServiceConstant.DEFAULTFETCHSIZE);
+        sql.append(" ORDER BY t2.timeId ");
+        return jdbcAccess.find(sql.toString(), EntityRowMapper.rowMapper(ActionLogDetail.class), params.toArray());
+    }
+
+    private void findConditionLimitId(List<Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
+        sql.append(" select row_number() over(order by RecordTime DESC) timeId,t1.ID, t1.LogId INTO #tmplog");
         conditionSql(params, sql, searchDetailCondition);
-        sql.append(" and timeId>").append(searchDetailCondition.getOffset());
-        sql.append(" and timeId<").append(searchDetailCondition.getOffset() + ServiceConstant.DEFAULTFETCHSIZE);
-        return jdbcAccess.find(sql.toString(), EntityRowMapper.rowMapper(TempLog.class), params.toArray());
     }
 
     private void conditionSql(List<Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
