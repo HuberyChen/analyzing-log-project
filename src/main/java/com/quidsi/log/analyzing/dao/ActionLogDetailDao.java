@@ -4,6 +4,7 @@ import com.quidsi.core.database.JPAAccess;
 import com.quidsi.core.util.StringUtils;
 import com.quidsi.log.analyzing.domain.ActionLogDetail;
 import com.quidsi.log.analyzing.domain.SearchDetailCondition;
+import com.quidsi.log.analyzing.domain.TempId;
 import com.quidsi.log.analyzing.service.ServiceConstant;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -48,16 +49,17 @@ public class ActionLogDetailDao {
     public List<ActionLogDetail> findConditionLimit(SearchDetailCondition searchDetailCondition) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder sql = new StringBuilder();
-        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" where id in (");
-        findConditionLimitId(params, sql, searchDetailCondition);
-        sql.append(")");
+        sql.append(" from ").append(ActionLogDetail.class.getName()).append(" t1 where INNER JOIN ").append(TempId.class.getName()).append(" t2 ON t1.Id=t2.Id order by t2.ID ");
         return jpaAccess.find(sql.toString(), params, searchDetailCondition.getOffset(), ServiceConstant.DEFAULTFETCHSIZE);
     }
 
-    private void findConditionLimitId(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
-        sql.append("select detail.id");
+    public List<Integer> createConditionLimitIdTemp(SearchDetailCondition searchDetailCondition) {
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append(" select detail.id");
         conditionSql(params, sql, searchDetailCondition);
         sql.append(" order by detail.recordTime desc");
+        return jpaAccess.find(sql.toString(), params);
     }
 
     private void conditionSql(Map<String, Object> params, StringBuilder sql, SearchDetailCondition searchDetailCondition) {
